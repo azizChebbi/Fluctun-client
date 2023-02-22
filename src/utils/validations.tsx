@@ -26,3 +26,10 @@ export const forgotPasswordSchema = yup
       .required(),
   })
   .required();
+
+export const resetPasswordsSchema = yup.object({
+  password: yup.string().min(8).required("Password is required"),
+  passwordConfirmation: yup
+    .string()
+    .oneOf([yup.ref("password")], "Passwords must match"),
+});
