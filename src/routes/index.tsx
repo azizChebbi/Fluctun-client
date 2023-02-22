@@ -45,6 +45,10 @@ export const unauthenticatedRoutes: RouteType[] = [
     element: <AuthScreensLayout />,
     children: [
       {
+        path: "/",
+        element: <Navigate to="/login" replace={true} />,
+      },
+      {
         path: "/login",
         element: <Login />,
       },

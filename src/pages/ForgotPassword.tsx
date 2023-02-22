@@ -12,7 +12,6 @@ import { api } from "@api/index";
 
 interface IFormInputs {
   email: string;
-  password: string;
 }
 
 const schema = forgotPasswordSchema;
