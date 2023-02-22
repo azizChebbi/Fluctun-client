@@ -1,7 +1,8 @@
 import { Tooltip } from "@mui/material";
 import React, { FC, useState } from "react";
 import { UseFormRegisterReturn } from "react-hook-form";
-import eye from "@icons/eye.svg";
+import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
+import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 
 interface IProps
   extends React.DetailedHTMLProps<
@@ -46,7 +47,12 @@ const Input: FC<IProps> = ({
               setShowPassword(!showPassword);
             }}
           >
-            <img src={eye} />
+            {showPassword ? (
+              <VisibilityOffOutlinedIcon />
+            ) : (
+              <VisibilityOutlinedIcon />
+            )}
+            {/* <img src={eye} /> */}
           </button>
         )}
       </div>

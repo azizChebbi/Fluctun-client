@@ -30,7 +30,7 @@ const Button: FC<IProps> = ({
         borderColor: disabled ? "#9CA3AF" : color || "#142B33",
       }}
       className={` border-[1px]
-    text-base font-semibold py-3 px-8 text-center outline-none ${
+    text-base font-semibold py-3 text-center outline-none ${
       disabled ? "cursor-not-allowed bg-gray-400" : ""
     } ${className}`}
       {...props}
