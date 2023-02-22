@@ -4,6 +4,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "react-query";
 import FallbackScreen from "@pages/FallbackScreen";
 import useLocalStorage from "@hooks/useLocalstorage";
+import { NotifyContainer } from "@utils/notify";
 import { authenticatedRoutes, unauthenticatedRoutes } from "./routes";
 
 const queryClient = new QueryClient();
@@ -14,6 +15,7 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <ErrorBoundary FallbackComponent={FallbackScreen}>
+        <NotifyContainer />
         {!token ? (
           <RouterProvider router={createBrowserRouter(authenticatedRoutes)} />
         ) : (
