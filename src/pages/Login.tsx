@@ -2,10 +2,16 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import "react-toastify/dist/ReactToastify.css";
-import { Link } from "react-router-dom";
+import { useMutation } from "react-query";
 import { loginSchema } from "@utils/validations";
 import Input from "@atoms/Input";
 import Button from "@atoms/Button";
+import CustomLink from "@atoms/CustomLink";
+import ErrorMessage from "@atoms/ErrorMessage";
+import AuthScreenFormWrapper from "@layouts/AuthScreenFormWrapper";
+import { api } from "@api/index";
+import { Auth, useAuth } from "@context/auth";
+import { notifyError } from "@utils/notify";
 
 interface IFormInputs {
   email: string;
@@ -15,7 +21,20 @@ interface IFormInputs {
 const schema = loginSchema;
 
 const Login = () => {
-  // const { login } = useAuth() as unknown as Auth;
+  const { setToken } = useAuth() as unknown as Auth;
+
+  const login = useMutation(
+    (data: IFormInputs) => api.post("/auth/login", data),
+    {
+      onSuccess: (res) => {
+        setToken(res.data.access_token);
+      },
+      onError: () => {
+        notifyError("L'adresse email ou le mot de passe est incorrect");
+      },
+    }
+  );
+
   const {
     register,
     handleSubmit,
@@ -28,20 +47,22 @@ const Login = () => {
   // handler
   // ==================================================
   // const onSubmit = (data: IFormInputs) => login(data);
-  const onSubmit = (data: IFormInputs) => console.log(data);
+  const onSubmit = (data: IFormInputs) => login.mutate(data);
 
   // ==================================================
   // ui
   // ==================================================
   return (
     <div className=" w-full min-h-screen">
-      <div className=" text-center w-1/3 m-auto mt-10 py-20 px-16 border-2 border-g300 rounded-xl">
-        <p className=" text-3xl text-blue font-medium mb-14">
+      <AuthScreenFormWrapper>
+        <p className=" text-xl sm:text-3xl text-blue font-medium mb-8 sm:mb-14">
           Bienvenue chez FlucTun
         </p>
         <form className="m-auto text-left" onSubmit={handleSubmit(onSubmit)}>
           <div className=" mb-5">
-            <label className=" text-lg text-g400 font-semibold">EMAIL</label>
+            <label className=" text-sm sm:text-lg text-g400 font-semibold">
+              EMAIL
+            </label>
             <br />
             <Input
               type={"email"}
@@ -49,12 +70,12 @@ const Login = () => {
               errorMessage={errors.email?.message}
               placeholder="example@domain.com"
             />
-            <p className=" text-red-500 text-sm mt-2">
-              {errors.email?.message}
-            </p>
+            <ErrorMessage>{errors.email?.message}</ErrorMessage>
           </div>
           <div className=" mb-5">
-            <label className=" text-lg text-g400 font-semibold">Password</label>
+            <label className=" text-sm sm:text-lg text-g400 font-semibold">
+              Password
+            </label>
             <br />
             <Input
               type="password"
@@ -62,9 +83,7 @@ const Login = () => {
               errorMessage={errors.password?.message}
               placeholder="*************"
             />
-            <p className=" text-red-500 text-sm mt-2">
-              {errors.password?.message}
-            </p>
+            <ErrorMessage>{errors.password?.message}</ErrorMessage>
           </div>
 
           <div className=" flex justify-center items-center w-full mt-10">
@@ -72,11 +91,9 @@ const Login = () => {
               Login
             </Button>
           </div>
-          <p className=" text-blue text-sm underline underline-offset-1 font-medium text-center mt-2">
-            <Link to={"/forgot-password"}>Mot de passe oublié ?</Link>
-          </p>
+          <CustomLink to="/forgot-password">Mot de passe oublié ?</CustomLink>
         </form>
-      </div>
+      </AuthScreenFormWrapper>
     </div>
   );
 };

@@ -4,7 +4,7 @@
 
 @layer components {
   .ipt {
-    @apply mt-1 w-full text-xl rounded-md border-g300 border-[1px] py-3 px-5 outline-none;
+    @apply mt-1 w-full text-lg sm:text-xl rounded-md border-g300 border-[1px] py-3 px-5 outline-none;
   }
 }
 

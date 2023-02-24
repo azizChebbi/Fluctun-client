@@ -8,7 +8,7 @@ interface IProps {
 
 const CustomLink: FC<IProps> = ({ to, children }) => {
   return (
-    <p className=" text-blue text-sm underline underline-offset-1 font-medium text-center mt-2">
+    <p className=" text-blue text-sm underline underline-offset-1 font-medium text-center mt-4">
       <Link to={to}>{children}</Link>
     </p>
   );

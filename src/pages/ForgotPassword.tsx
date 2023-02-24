@@ -9,6 +9,8 @@ import Input from "@atoms/Input";
 import Button from "@atoms/Button";
 import CustomLink from "@atoms/CustomLink";
 import { api } from "@api/index";
+import ErrorMessage from "@atoms/ErrorMessage";
+import AuthScreenFormWrapper from "@layouts/AuthScreenFormWrapper";
 
 interface IFormInputs {
   email: string;
@@ -52,17 +54,19 @@ const ForgotPassword = () => {
   // ==================================================
   return (
     <div className=" w-full min-h-screen">
-      <div className=" text-center w-1/3 m-auto mt-10 py-20 px-16 border-2 border-g300 rounded-xl">
-        <p className=" text-3xl text-blue font-medium mb-14">
+      <AuthScreenFormWrapper>
+        <p className=" text-xl sm:text-3xl text-blue font-medium mb-8 sm:mb-14">
           Mot de passe oublié ?
         </p>
-        <p className=" text-[#757575] text-left mb-12 font-medium text-lg">
+        <p className=" text-[#757575] text-center mb-6 sm:mb-12 font-medium text-base sm:text-lg">
           Entrez votre adresse e-mail et sélectionnez{" "}
           <span className=" font-extrabold">Envoyer un email</span>.
         </p>
         <form className=" m-auto text-left" onSubmit={handleSubmit(onSubmit)}>
           <div className=" mb-5">
-            <label className=" text-lg text-g400 font-semibold">EMAIL</label>
+            <label className=" text-sm sm:text-lg text-g400 font-semibold">
+              EMAIL
+            </label>
             <br />
             <Input
               type={"email"}
@@ -70,18 +74,20 @@ const ForgotPassword = () => {
               errorMessage={errors.email?.message}
               placeholder="example@domain.com"
             />
-            <p className=" text-red-500 text-sm mt-2">
-              {errors.email?.message}
-            </p>
+            <ErrorMessage>{errors.email?.message}</ErrorMessage>
           </div>
           <div className=" flex justify-center items-center w-full mt-10">
-            <Button className=" rounded-3xl px-24" type="submit">
+            <Button
+              className=" rounded-3xl px-24"
+              type="submit"
+              isLoading={sendEmail.isLoading}
+            >
               Envoyer en email
             </Button>
           </div>
           <CustomLink to="/login">Retour login</CustomLink>
         </form>
-      </div>
+      </AuthScreenFormWrapper>
     </div>
   );
 };

@@ -7,6 +7,7 @@ import ForgotPassword from "@pages/ForgotPassword";
 import AuthScreensLayout from "@layouts/AuthScreensLayout";
 import ResetPassword from "@pages/ResetPassword";
 import SendEmail from "@pages/SendEmail";
+import ResetSuccess from "@pages/ResetSuccess";
 
 type Path =
   | "/"
@@ -14,7 +15,8 @@ type Path =
   | "*"
   | "/forgot-password"
   | "/reset-password/:id/:token"
-  | "/email-sent";
+  | "/email-sent"
+  | "/reset-success";
 
 type RouteType = {
   path: Path;
@@ -63,6 +65,10 @@ export const unauthenticatedRoutes: RouteType[] = [
       {
         path: "/email-sent",
         element: <SendEmail />,
+      },
+      {
+        path: "/reset-success",
+        element: <ResetSuccess />,
       },
       {
         path: "*",
