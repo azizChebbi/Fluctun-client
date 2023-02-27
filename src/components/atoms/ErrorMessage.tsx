@@ -5,7 +5,9 @@ interface IProps {
 }
 
 const ErrorMessage: FC<IProps> = ({ children }) => {
-  return <p className=" text-red-500 text-xs sm:text-sm mt-2">{children}</p>;
+  return (
+    <p className=" text-red-500 text-xs sm:text-sm mt-2 ml-2">{children}</p>
+  );
 };
 
 export default ErrorMessage;

@@ -1,12 +1,22 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
+import useMediaQuery from "@hooks/useMediaQuery";
+import DesktopLayout from "./DesktopLayout";
+import MobileLayout from "./MobileLayout";
 
 const MainLayout = () => {
+  const matches = useMediaQuery("(min-width: 768px)");
   return (
     <div>
-      <h1 className=" text-red-400">Navbar</h1>
-      <Outlet />
-      <h1 className=" text-red-400">Footer</h1>
+      {matches ? (
+        <DesktopLayout>
+          <Outlet />
+        </DesktopLayout>
+      ) : (
+        <MobileLayout>
+          <Outlet />
+        </MobileLayout>
+      )}
     </div>
   );
 };

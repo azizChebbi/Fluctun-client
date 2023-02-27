@@ -10,7 +10,7 @@ interface IProps
     HTMLInputElement
   > {
   errorMessage?: string;
-  registration: Partial<UseFormRegisterReturn>;
+  registration: Partial<UseFormRegisterReturn> | null;
 }
 
 const Input: FC<IProps> = ({

@@ -5,7 +5,7 @@ import { api } from "api";
 import { notifyError } from "@utils/notify";
 import useLocalStorage from "@hooks/useLocalstorage";
 
-const AuthContext = React.createContext(null);
+const AuthContext = React.createContext<Auth | null>(null);
 AuthContext.displayName = "AuthContext";
 
 export type Auth = {
@@ -70,7 +70,7 @@ function AuthProvider(props: any) {
 }
 
 function useAuth() {
-  const context = React.useContext(AuthContext);
+  const context = React.useContext(AuthContext) as Auth;
   if (context === undefined) {
     throw new Error("useAuth must be used within a AuthProvider");
   }

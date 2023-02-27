@@ -1,20 +1,10 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
+import frTranslation from "../locales/fr";
 
-// don't want to use this?
-// have a look at the Quick start guide
-// for passing in lng and translations on init
-console.log(window);
-
+console.log(frTranslation);
 const resources = {
-  fr: {
-    translation: {
-      "Welcome to React": "Bienvenue à React et react-i18next",
-    },
-    common: {
-      "Welcome to React": "ca cest namespace a part du common",
-    },
-  },
+  fr: frTranslation,
 };
 
 i18n

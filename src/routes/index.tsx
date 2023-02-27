@@ -8,6 +8,8 @@ import AuthScreensLayout from "@layouts/AuthScreensLayout";
 import ResetPassword from "@pages/ResetPassword";
 import SendEmail from "@pages/SendEmail";
 import ResetSuccess from "@pages/ResetSuccess";
+import Ask from "@pages/Ask";
+import Questions from "@pages/Questions";
 
 type Path =
   | "/"
@@ -16,7 +18,9 @@ type Path =
   | "/forgot-password"
   | "/reset-password/:id/:token"
   | "/email-sent"
-  | "/reset-success";
+  | "/reset-success"
+  | "/ask"
+  | "questions";
 
 type RouteType = {
   path: Path;
@@ -26,12 +30,20 @@ type RouteType = {
 
 export const authenticatedRoutes: RouteType[] = [
   {
+    path: "/ask",
+    element: <Ask />,
+  },
+  {
     path: "/",
     element: <MainLayout />,
     children: [
       {
         path: "/",
         element: <Home />,
+      },
+      {
+        path: "questions",
+        element: <Questions />,
       },
       {
         path: "*",

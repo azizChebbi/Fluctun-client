@@ -1,4 +1,5 @@
 import * as yup from "yup";
+import i18 from "../config/i18";
 
 export const loginSchema = yup
   .object({
@@ -32,4 +33,19 @@ export const resetPasswordsSchema = yup.object({
   passwordConfirmation: yup
     .string()
     .oneOf([yup.ref("password")], "Passwords must match"),
+});
+
+export const askQuestionSchema = yup.object({
+  question: yup
+    .string()
+    .min(5, i18.t("ask:errorMessages.question.min") as string)
+    .max(150, i18.t("ask:errorMessages.question.max") as string)
+    .required(i18.t("ask:errorMessages.question") as string),
+  subject: yup
+    .object()
+    .shape({
+      label: yup.string().required(),
+      value: yup.string().required(),
+    })
+    .required(),
 });

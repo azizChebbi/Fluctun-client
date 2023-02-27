@@ -1,0 +1,33 @@
+{
+  "advices": {
+    "title": "Poser la bonne question !",
+    "advices": [
+      "Résumez votre problème dans un titre d'une ligne.",
+      "Décrivez votre problème plus en détail.",
+      "Décrivez ce que vous avez fait et ce qui ne s'est pas bien passé.",
+      "Ajoutez des 'tags' qui aident à présenter votre question aux membres .",
+      "Passez en revue votre question et postez-la sur le site."
+    ]
+  },
+  "form": {
+    "question": {
+      "title": "Decrire la question brievement:",
+      "description": "Soyez précis et imaginez que vous posez une question à une autre personne."
+    },
+    "description": {
+      "title": "Poser les details du question si dessous: ",
+      "description": "Présentez le problème et développez ce que vous avez mis dans le titre. Minimum 20 caractères."
+    },
+    "subject": {
+      "title": "Choisir la matiere concernant votre question:",
+      "description": "Vous pouvez choisir seulement une matiere pare question "
+    }
+  },
+  "errorMessages": {
+    "question": {
+      "min": "doit etre 5 caracteres au minimum",
+      "max": "doit etre 150 caracteres au maximum"
+    },
+    "subject": "doit avoir une sujet"
+  }
+}
