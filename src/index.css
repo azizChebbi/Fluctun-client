@@ -21,3 +21,23 @@ html {
   line-height: 1.5;
   font-weight: 400;
 }
+
+.ql-editor {
+  min-height: 300px;
+}
+
+.question-cover {
+  background-image: linear-gradient(
+    rgba(252, 252, 252, 0),
+    rgba(252, 252, 252, 0.8),
+    #fcfcfc
+  );
+}
+
+.answered-ticket {
+  background-image: linear-gradient(#38f390, #005533);
+}
+
+.unanswered-ticket {
+  background-image: linear-gradient(#ba3f3f, #ff7d7d);
+}

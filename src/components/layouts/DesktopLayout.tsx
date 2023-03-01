@@ -11,7 +11,7 @@ const DesktopLayout: FC<IProps> = ({ children }) => {
     <div className=" h-screen grid grid-cols-[250px_1fr] grid-rows-[100px_1fr]">
       <DesktopNavbar />
       <Sidebar />
-      <main className=" overflow-scroll px-8">{children}</main>
+      <main className=" overflow-scroll">{children}</main>
     </div>
   );
 };

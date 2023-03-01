@@ -10,6 +10,7 @@ import SendEmail from "@pages/SendEmail";
 import ResetSuccess from "@pages/ResetSuccess";
 import Ask from "@pages/Ask";
 import Questions from "@pages/Questions";
+import Courses from "@pages/Courses";
 
 type Path =
   | "/"
@@ -20,7 +21,8 @@ type Path =
   | "/email-sent"
   | "/reset-success"
   | "/ask"
-  | "questions";
+  | "questions"
+  | "courses";
 
 type RouteType = {
   path: Path;
@@ -44,6 +46,10 @@ export const authenticatedRoutes: RouteType[] = [
       {
         path: "questions",
         element: <Questions />,
+      },
+      {
+        path: "courses",
+        element: <Courses />,
       },
       {
         path: "*",

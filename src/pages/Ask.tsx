@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -26,9 +26,7 @@ interface IFormInputs {
 const schema = askQuestionSchema;
 
 const Ask = () => {
-  const [description, setDescription] = useState<string>(
-    "<p></br></br></br></br></br></br></br></p>"
-  );
+  const [description, setDescription] = useState<string>("");
 
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -144,12 +142,13 @@ const Ask = () => {
             >
               Valider
             </Button>
-            <Link
-              to="/"
+            <button
+              type="button"
+              onClick={() => navigate(-1)}
               className=" text-red-500 text-sm underline-offset-1 underline"
             >
               cancel
-            </Link>
+            </button>
           </div>
         </form>
       </div>
