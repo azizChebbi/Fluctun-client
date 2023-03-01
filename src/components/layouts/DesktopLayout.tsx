@@ -8,10 +8,10 @@ interface IProps {
 
 const DesktopLayout: FC<IProps> = ({ children }) => {
   return (
-    <div className=" h-screen grid grid-cols-[250px_1fr] grid-rows-[100px_1fr]">
+    <div className=" h-screen grid grid-cols-[220px_1fr] grid-rows-[100px_1fr]">
       <DesktopNavbar />
       <Sidebar />
-      <main className=" overflow-scroll">{children}</main>
+      <main className=" overflow-hidden">{children}</main>
     </div>
   );
 };

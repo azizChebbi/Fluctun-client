@@ -1,10 +1,10 @@
 import React from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { useAuth, Auth } from "@context/auth";
+import { useAuth } from "@context/auth";
 import { authenticatedRoutes, unauthenticatedRoutes } from "./routes";
 
 const App = () => {
-  const { token } = useAuth() as unknown as Auth;
+  const { token } = useAuth();
 
   if (token) {
     return <RouterProvider router={createBrowserRouter(authenticatedRoutes)} />;

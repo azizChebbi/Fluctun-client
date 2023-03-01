@@ -145,7 +145,7 @@ const Ask = () => {
             <button
               type="button"
               onClick={() => navigate(-1)}
-              className=" text-red-500 text-sm underline-offset-1 underline"
+              className=" text-red-500  text-base md:text-lg underline-offset-1 underline"
             >
               cancel
             </button>

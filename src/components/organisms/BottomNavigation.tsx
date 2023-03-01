@@ -5,7 +5,7 @@ import usePathname from "@hooks/usePathname";
 
 const BottomNavigation = () => {
   return (
-    <div className="fixed bg-white left-0 right-0 bottom-0 border-t-[1px] border-[#A1A1A1] flex items-end gap-4">
+    <div className="fixed bg-white left-0 right-0 bottom-0 border-t-[1px] border-[#A1A1A1] flex items-end gap-4 z-10">
       {tabs.map((tab) => (
         <NavigationLink
           className=" flex-1"

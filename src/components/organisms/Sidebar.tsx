@@ -1,11 +1,13 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { tabs } from "@utils/tabs";
 import usePathname from "@hooks/usePathname";
 import { useAuth } from "@context/auth";
 
 const Sidebar = () => {
   const { logout } = useAuth();
+  const { t } = useTranslation();
 
   return (
     <aside className=" border-r border-[#AFAFAF] grid grid-rows-[1fr_150px]">
@@ -27,7 +29,7 @@ const Sidebar = () => {
                     <img src={tab.icon} alt={tab.label} />
                   </div>
                   <span className=" text-xl font-medium text-right">
-                    {tab.label}
+                    {t(`tabs.${tab.label}`)}
                   </span>
                 </div>
               </Link>
