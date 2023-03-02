@@ -4,16 +4,20 @@ import { useTranslation } from "react-i18next";
 import { tabs } from "@utils/tabs";
 import usePathname from "@hooks/usePathname";
 import { useAuth } from "@context/auth";
+import useRole from "@hooks/useRole";
 
 const Sidebar = () => {
   const { logout } = useAuth();
   const { t } = useTranslation();
+
+  const role = useRole();
 
   return (
     <aside className=" border-r border-[#AFAFAF] grid grid-rows-[1fr_150px]">
       <div>
         <div className=" flex flex-col justify-around mt-12">
           {tabs.map((tab, index) => {
+            if (tab.href == "/ask" && role == "teacher") return null;
             return (
               <Link
                 to={tab.href}

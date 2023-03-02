@@ -4,7 +4,7 @@ import QuestionsList from "@features/questions/components/QuestionsList";
 import Filter from "@features/questions/components/Filter";
 import SideDrawer from "@features/questions/components/Drawer";
 
-const questions: QuestionType[] = [
+const questionss: QuestionType[] = [
   {
     id: "1",
     title:
@@ -54,6 +54,7 @@ const questions: QuestionType[] = [
 
 const Questions = () => {
   const [open, setOpen] = React.useState(false);
+  const [questions, setQuestions] = React.useState<QuestionType[]>([]);
   return (
     <div className=" grid  md:grid-cols-[1fr_280px] h-full ">
       <div className=" md:border-r border-[#AFAFAF] px-3 md:px-6 md:py-6  md:p-12 h-full overflow-scroll">
@@ -68,13 +69,13 @@ const Questions = () => {
             Filtrer
           </p>
         </div>
-        <QuestionsList questions={questions} />
+        <QuestionsList questions={questionss} />
       </div>
       <div className=" hidden md:block overflow-scroll">
-        <Filter />
+        <Filter questions={questions} setQuestions={setQuestions} />
       </div>
       <SideDrawer open={open} setOpen={setOpen}>
-        <Filter />
+        <Filter questions={questions} setQuestions={setQuestions} />
       </SideDrawer>
     </div>
   );
