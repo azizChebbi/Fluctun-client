@@ -2,16 +2,14 @@ import React, { useState } from "react";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery } from "react-query";
 import { useTranslation } from "react-i18next";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { getQuestionById } from "@features/questions/api";
 import QuestionOrAnswerDetails from "@features/questions/components/QuestionOrAnswerDetails";
 import usePayload from "@hooks/usePayload";
-import AskSection from "@features/ask/components/AskSection";
-import QuillEditor from "@organisms/QuillEditor";
-import Button from "@atoms/Button";
 import { api } from "@api/index";
 import { queryClient } from "@context/index";
 import { notifyError } from "@utils/notify";
+import AddAnswer from "@features/questions/components/AddOrEditAnswer";
+import Back from "@atoms/Back";
 import FullPageSpinner from "./FullPageSpinner";
 
 const Description = () => {
@@ -72,14 +70,7 @@ const Description = () => {
   if (isError || !id) return <Navigate to="/questions" replace={true} />;
   return (
     <div className=" m-auto px-6 py-12 md:w-1/2">
-      <Button
-        outlined
-        className=" flex items-center gap-2 border-none"
-        onClick={() => navigate(-1)}
-      >
-        <ArrowBackIcon sx={{ color: "#142B33" }} />
-        Back
-      </Button>
+      <Back />
       <QuestionOrAnswerDetails
         isQuestion={true}
         id={id}
@@ -110,33 +101,12 @@ const Description = () => {
         />
       ))}
       {payload.role === "teacher" && (
-        <div className=" mt-12">
-          <AskSection
-            title={t("ask:form.description.title")}
-            description={t("ask:form.description.description")}
-          >
-            <div className=" mt-4">
-              <QuillEditor
-                value={answer}
-                setValue={setAnswer}
-                placeholder="Ecrivez votre réponse ici..."
-              />
-              <div className=" text-right">
-                <Button
-                  className=" mt-6 rounded px-6 py-3 text-sm md:px-10 md:text-lg"
-                  type="submit"
-                  onClick={handleAddAnswer}
-                  isLoading={addAnswerMutation.isLoading}
-                  disabled={
-                    answer.replace(/<(.|\n)*?>/g, "").trim().length < 200
-                  }
-                >
-                  Valider
-                </Button>
-              </div>
-            </div>
-          </AskSection>
-        </div>
+        <AddAnswer
+          answer={answer}
+          setAnswer={setAnswer}
+          handleValidate={handleAddAnswer}
+          isLoading={addAnswerMutation.isLoading}
+        />
       )}
     </div>
   );

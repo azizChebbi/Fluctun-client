@@ -1,5 +1,4 @@
 import React, { FC } from "react";
-import Avatar from "@mui/material/Avatar";
 import { Link, useNavigate } from "react-router-dom";
 import Modal from "@mui/material/Modal";
 import { useMutation } from "react-query";
@@ -10,7 +9,8 @@ import { api } from "@api/index";
 import { notifyError } from "@utils/notify";
 import { queryClient } from "@context/index";
 import AddComment from "./AddComment";
-import { Comment } from "../types";
+import Comment from "./Comment";
+import { Comment as CommentType } from "../types";
 
 interface IProps {
   isQuestion: boolean;
@@ -19,7 +19,7 @@ interface IProps {
   teacherId: string | null;
   studentId: string | null;
   description: string;
-  comments: Comment[];
+  comments: CommentType[];
   teacher?: {
     id: string;
     firstName: string;
@@ -92,20 +92,6 @@ const QuestionOrAnswerDetails: FC<IProps> = ({
     }
   );
 
-  const deleteCommentMutation = useMutation(
-    (commentId: string) => api.delete("/questions/comment?id=" + commentId),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries(["question", id]);
-      },
-      onError: () => {
-        notifyError(
-          "Une erreur est survenue lors de la suppression du commentaire"
-        );
-      },
-    }
-  );
-
   // ========================================
   // =============== HANDLERS ===============
   // ========================================
@@ -119,10 +105,6 @@ const QuestionOrAnswerDetails: FC<IProps> = ({
     } else {
       deleteAnswerMutation.mutate();
     }
-  };
-
-  const handleDeleteComment = (id: string) => {
-    deleteCommentMutation.mutate(id);
   };
 
   return (
@@ -191,10 +173,6 @@ const QuestionOrAnswerDetails: FC<IProps> = ({
           </div>
 
           {/* ======================================== */}
-          {/* =============== ACTIONS =============== */}
-          {/* ======================================== */}
-
-          {/* ======================================== */}
           {/* =============== COMMENTS =============== */}
           {/* ======================================== */}
           <div className=" md:mt-12">
@@ -211,36 +189,7 @@ const QuestionOrAnswerDetails: FC<IProps> = ({
                       : ""
                   }`}
                 >
-                  <div className=" flex items-start gap-3 p-4">
-                    <Avatar
-                      sx={{ width: 30, height: 30 }}
-                      alt="Emery"
-                      src={
-                        payload.role === "teacher"
-                          ? ""
-                          : comment.student?.photo ||
-                            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQmatBzkPfadV3gbygHddFgNYbNzBbINaWqFamNP3zOCJyY-EZzJJZW3SjSpeYSGfSlsgI&usqp=CAU"
-                      }
-                    />
-                    <p className=" mt-[2px] flex-1 text-sm font-light text-blue md:text-lg">
-                      {comment.text}
-                    </p>
-                  </div>
-                  <div className=" flex flex-row-reverse items-center justify-between px-12">
-                    <p className="text-xs font-light text-[#A1A1A1] md:text-base">
-                      <DateFomratted date={comment.createdAt || ""} />
-                    </p>
-                    {(payload.role === "teacher"
-                      ? payload.id == comment.teacher?.id
-                      : payload.id == comment.student?.id) && (
-                      <button
-                        className=" text-xs text-[#A1A1A1] md:text-base"
-                        onClick={() => handleDeleteComment(comment.id)}
-                      >
-                        Supprimer
-                      </button>
-                    )}
-                  </div>
+                  <Comment comment={comment} />
                 </div>
               ))}
             </div>
