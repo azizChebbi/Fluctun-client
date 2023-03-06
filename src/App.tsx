@@ -2,10 +2,13 @@ import React, { useEffect } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import OneSignal from "react-onesignal";
 import { useAuth } from "@context/auth";
+import usePayload from "@hooks/usePayload";
 import { authenticatedRoutes, unauthenticatedRoutes } from "./routes";
 
 const App = () => {
   const { token } = useAuth();
+  const payload = usePayload();
+  console.log(payload);
   //  hi my name is hdoknqsdnrbaieznfgennscjxqbx,;qnwaozidnzeudn yOU'RE LY EDQNDQSKJNAZODINAZDKNSQLXNQSXXJBWAWSZGDEGFGGGHFJDSBQ,AZNEWAAQWSZXE
   useEffect(() => {
     OneSignal.init({

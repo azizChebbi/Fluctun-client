@@ -35,8 +35,18 @@ export type Comment = {
   text: string;
   createdAt: string;
   lastUpdatedAt: string;
-  teacher: { firstName: string; lastName: string; photo: string } | null;
-  student: { firstName: string; lastName: string; photo: string } | null;
+  teacher: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    photo: string;
+  } | null;
+  student: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    photo: string;
+  } | null;
 };
 
 export type Answer = {

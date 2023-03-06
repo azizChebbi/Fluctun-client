@@ -13,6 +13,7 @@ import Questions from "@pages/Questions";
 import Courses from "@pages/Courses";
 import Details from "@pages/Details";
 import Profile from "@pages/Profile";
+import EditAnswer from "@pages/EditAnswer";
 
 type Path =
   | "/"
@@ -26,7 +27,8 @@ type Path =
   | "/questions"
   | "/courses"
   | "/questions/:id"
-  | "/profile";
+  | "/profile"
+  | "/edit-answer/:id";
 
 type RouteType = {
   path: Path;
@@ -38,6 +40,10 @@ export const authenticatedRoutes: RouteType[] = [
   {
     path: "/ask",
     element: <Ask />,
+  },
+  {
+    path: "/edit-answer/:id",
+    element: <EditAnswer />,
   },
   {
     path: "/questions/:id",

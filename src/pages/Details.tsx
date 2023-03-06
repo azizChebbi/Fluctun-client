@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { Navigate, useParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery } from "react-query";
 import { useTranslation } from "react-i18next";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { getQuestionById } from "@features/questions/api";
 import QuestionOrAnswerDetails from "@features/questions/components/QuestionOrAnswerDetails";
 import usePayload from "@hooks/usePayload";
@@ -25,6 +26,7 @@ const Description = () => {
   const { id } = useParams<{ id: string }>();
   const { t } = useTranslation();
   const payload = usePayload();
+  const navigate = useNavigate();
 
   // =======================================
   // ========= MUTATION AND QUERIES ========
@@ -70,27 +72,37 @@ const Description = () => {
   if (isError || !id) return <Navigate to="/questions" replace={true} />;
   return (
     <div className=" m-auto px-6 py-12 md:w-1/2">
+      <Button
+        outlined
+        className=" flex items-center gap-2 border-none"
+        onClick={() => navigate(-1)}
+      >
+        <ArrowBackIcon sx={{ color: "#142B33" }} />
+        Back
+      </Button>
       <QuestionOrAnswerDetails
         isQuestion={true}
         id={id}
-        teacherId={payload.role === "teacher" ? payload.id : null}
-        studentId={payload.role === "student" ? payload.id : null}
+        teacherId={null}
+        studentId={data?.data.studentId || null}
         title={data?.data.question}
         description={data?.data.description || ""}
         comments={data?.data.comments || []}
         createdAt={data?.data.createdAt || ""}
+        subject={data?.data.subject || ""}
         postComment={() => null}
         onDelete={() => null}
       />
-      {data?.data.answers.map((answer) => (
+      {data?.data?.answers?.map((answer) => (
         <QuestionOrAnswerDetails
           key={answer.id}
           isQuestion={false}
           id={answer.id}
-          teacherId={payload.role === "teacher" ? payload.id : null}
-          studentId={payload.role === "student" ? payload.id : null}
+          teacherId={answer.teacher.id || null}
+          studentId={null}
           teacher={answer.teacher}
           description={answer.description || ""}
+          subject={data?.data.subject || ""}
           comments={answer.comments || []}
           createdAt={answer.createdAt || ""}
           postComment={() => null}

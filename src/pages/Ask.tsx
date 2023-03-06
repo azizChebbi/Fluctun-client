@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -16,6 +16,7 @@ import QuillEditor from "@organisms/QuillEditor";
 import { postQuestion, PostQuestionBody } from "@features/ask/api";
 import { notifyError, notifySuccess } from "@utils/notify";
 import minios from "@images/minions.svg";
+import { api } from "@api/index";
 
 interface IFormInputs {
   question: string;
@@ -26,7 +27,26 @@ interface IFormInputs {
 const schema = askQuestionSchema;
 
 const Ask = () => {
-  const [description, setDescription] = useState<string>("");
+  // =========================================
+  // ============= State & Refs =============
+  // =========================================
+  const location = useLocation();
+  const state = location.state as {
+    id: string;
+    title: string;
+    description: string;
+    subject: {
+      label: string;
+      value: string;
+    };
+  };
+  const [description, setDescription] = useState<string>(
+    state?.description || ""
+  );
+
+  // =========================================
+  // ============= Hooks & Methods ==========
+  // =========================================
 
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -39,7 +59,15 @@ const Ask = () => {
   } = useForm<IFormInputs>({
     resolver: yupResolver(schema),
     mode: "onChange",
+    defaultValues: {
+      question: state?.title,
+      subject: state?.subject,
+    },
   });
+
+  // =========================================
+  // ============= Mutations ================
+  // =========================================
 
   const postQuestionMutation = useMutation(
     (data: PostQuestionBody) => postQuestion(data),
@@ -56,12 +84,39 @@ const Ask = () => {
     }
   );
 
+  const editQuestionMutation = useMutation(
+    (data: PostQuestionBody) => api.put("/questions/" + state.id, data),
+    {
+      onSuccess: () => {
+        notifySuccess("Question est modifier avec succée");
+        navigate(-1);
+      },
+      onError: () => {
+        notifyError(
+          "Une erreur s'est produite, actualisez la page et réessayez"
+        );
+      },
+    }
+  );
+
+  // =========================================
+  // ============= Handlers =================
+  // =========================================
+
   const onSubmit = (data: IFormInputs) => {
-    postQuestionMutation.mutate({
-      question: data.question,
-      description,
-      subject: data.subject.value,
-    });
+    if (!state) {
+      postQuestionMutation.mutate({
+        question: data.question,
+        description,
+        subject: data.subject.value,
+      });
+    } else {
+      editQuestionMutation.mutate({
+        question: data.question,
+        description,
+        subject: data.subject.value,
+      });
+    }
   };
 
   return (
