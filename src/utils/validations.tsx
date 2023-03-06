@@ -49,3 +49,7 @@ export const askQuestionSchema = yup.object({
     })
     .required(),
 });
+
+export const addCommentSchema = yup.object({
+  comment: yup.string().required(),
+});

@@ -11,6 +11,8 @@ import ResetSuccess from "@pages/ResetSuccess";
 import Ask from "@pages/Ask";
 import Questions from "@pages/Questions";
 import Courses from "@pages/Courses";
+import Details from "@pages/Details";
+import Profile from "@pages/Profile";
 
 type Path =
   | "/"
@@ -21,8 +23,10 @@ type Path =
   | "/email-sent"
   | "/reset-success"
   | "/ask"
-  | "questions"
-  | "courses";
+  | "/questions"
+  | "/courses"
+  | "/questions/:id"
+  | "/profile";
 
 type RouteType = {
   path: Path;
@@ -36,6 +40,14 @@ export const authenticatedRoutes: RouteType[] = [
     element: <Ask />,
   },
   {
+    path: "/questions/:id",
+    element: <Details />,
+  },
+  {
+    path: "/profile",
+    element: <Profile />,
+  },
+  {
     path: "/",
     element: <MainLayout />,
     children: [
@@ -44,13 +56,14 @@ export const authenticatedRoutes: RouteType[] = [
         element: <Home />,
       },
       {
-        path: "questions",
+        path: "/questions",
         element: <Questions />,
       },
       {
-        path: "courses",
+        path: "/courses",
         element: <Courses />,
       },
+
       {
         path: "*",
         element: <Navigate to="/" replace={true} />,

@@ -10,7 +10,7 @@ interface IProps
     HTMLInputElement
   > {
   errorMessage?: string;
-  registration: Partial<UseFormRegisterReturn> | null;
+  registration?: Partial<UseFormRegisterReturn> | null;
 }
 
 const Input: FC<IProps> = ({
@@ -29,10 +29,10 @@ const Input: FC<IProps> = ({
       arrow
       sx={{ fontSize: "20px" }}
     >
-      <div className=" p-0 flex-1 relative">
+      <div className=" relative flex-1 p-0">
         <input
-          className={`ipt outline-none w-full ${
-            errorMessage && " text-red-500 border-red-500"
+          className={`ipt w-full outline-none ${
+            errorMessage && " border-red-500 text-red-500"
           } ${className}`}
           placeholder={placeholder}
           type={showPassword ? "text" : type}

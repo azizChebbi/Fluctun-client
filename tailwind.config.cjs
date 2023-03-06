@@ -23,7 +23,7 @@ module.exports = {
       },
       boxShadow: {
         question: "rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;",
-        subject: "rgba(0, 0, 0, 0.24) 0px 3px 8px;",
+        subject: "rgba(0, 0, 0, 0.15) 0px 3px 5px;",
       },
     },
   },

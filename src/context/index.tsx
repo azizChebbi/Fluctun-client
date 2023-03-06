@@ -5,7 +5,7 @@ import FallbackScreen from "@pages/FallbackScreen";
 import { NotifyContainer } from "@utils/notify";
 import { AuthProvider } from "./auth";
 
-const queryClient = new QueryClient();
+export const queryClient = new QueryClient();
 
 interface IProps {
   children?: ReactNode;

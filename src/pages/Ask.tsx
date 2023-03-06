@@ -46,7 +46,7 @@ const Ask = () => {
     {
       onSuccess: () => {
         notifySuccess("Question est ajouter avec succée");
-        navigate("/");
+        navigate(-1);
       },
       onError: () => {
         notifyError(
@@ -65,22 +65,22 @@ const Ask = () => {
   };
 
   return (
-    <div className=" md:flex items-start md:my-24 md:w-11/12">
-      <div className=" w-full md:w-2/3 m-auto p-4 text-blue">
-        <div className=" bg-[#E1F2FF] border-[#56B6FF] border p-4 mb-6">
-          <h2 className=" sm:text-xl font-medium">{t("ask:advices.title")}</h2>
+    <div className=" items-start md:my-24 md:flex md:w-11/12">
+      <div className=" m-auto w-full p-4 text-blue md:w-2/3">
+        <div className=" mb-6 border border-[#56B6FF] bg-[#E1F2FF] p-4">
+          <h2 className=" font-medium sm:text-xl">{t("ask:advices.title")}</h2>
           <div className=" ml-4 mt-4">
             {t<string, string[]>("ask:advices.advices", {
               returnObjects: true,
             }).map((t: string, index: number) => (
               <p
                 key={index}
-                className=" text-blue flex gap-x-2 items-start my-2"
+                className=" my-2 flex items-start gap-x-2 text-blue"
               >
                 <FiberManualRecordIcon
                   sx={{ color: "#142B33", fontSize: "5px", marginTop: "4px" }}
                 />
-                <p className=" text-xs sm:text-base font-light">{t}</p>
+                <p className=" text-xs font-light sm:text-base">{t}</p>
               </p>
             ))}
           </div>
@@ -103,7 +103,11 @@ const Ask = () => {
             description={t("ask:form.description.description")}
           >
             <div className=" mt-4">
-              <QuillEditor value={description} setValue={setDescription} />
+              <QuillEditor
+                value={description}
+                setValue={setDescription}
+                placeholder="Ecrivez votre question ici..."
+              />
             </div>
           </AskSection>
           <AskSection
@@ -130,7 +134,7 @@ const Ask = () => {
             />
             <ErrorMessage>{errors.subject?.message}</ErrorMessage>
           </AskSection>
-          <div className=" flex items-center justify-between mt-8">
+          <div className=" mt-8 flex items-center justify-between">
             <Button
               className=" rounded p-3 px-12 text-sm"
               type="submit"
@@ -145,7 +149,7 @@ const Ask = () => {
             <button
               type="button"
               onClick={() => navigate(-1)}
-              className=" text-red-500  text-base md:text-lg underline-offset-1 underline"
+              className=" text-base  text-red-500 underline underline-offset-1 md:text-lg"
             >
               cancel
             </button>
@@ -154,7 +158,7 @@ const Ask = () => {
       </div>
       <img
         src={minios}
-        className=" max-w-[300px] hidden md:block -mt-24 -ml-48"
+        className=" -mt-24 -ml-48 hidden max-w-[300px] md:block"
       />
     </div>
   );

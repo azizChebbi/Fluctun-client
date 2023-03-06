@@ -1,7 +1,7 @@
 import jwtDecode from "jwt-decode";
 import useLocalStorage from "./useLocalstorage";
 
-export type Role = "student" | "teacher" | "super-admin" | "";
+export type Role = "student" | "teacher" | "";
 
 export type JwtPayload = {
   id: string;

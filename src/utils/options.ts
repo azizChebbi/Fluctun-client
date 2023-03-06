@@ -1,7 +1,7 @@
 import { Option } from "@atoms/SelectOption";
 
 export const subjectOptions: Option[] = [
-  { value: "Mathémathique", label: "Mathémathique" },
+  { value: "Mathématique", label: "Mathématique" },
   { value: "Science", label: "Science" },
   { value: "Physique", label: "Physique" },
 ];

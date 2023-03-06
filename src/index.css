@@ -4,7 +4,7 @@
 
 @layer components {
   .ipt {
-    @apply mt-1 w-full text-base md:text-lg sm:text-xl rounded-md border-g300 border-[1px] py-3  px-3 md:px-5 outline-none;
+    @apply mt-1 w-full rounded-md border-[1px] border-[#E2E2E2] py-3 px-3 text-base outline-none  sm:text-xl md:px-5 md:text-lg;
   }
 }
 
@@ -14,6 +14,7 @@
 
 html {
   font-size: 75%;
+  background-color: #fcfcfc;
 }
 
 :root {

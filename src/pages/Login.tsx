@@ -53,14 +53,14 @@ const Login = () => {
   // ui
   // ==================================================
   return (
-    <div className=" w-full min-h-screen">
+    <div className=" min-h-screen w-full">
       <AuthScreenFormWrapper>
-        <p className=" text-xl sm:text-3xl text-blue font-medium mb-8 sm:mb-14">
+        <p className=" mb-8 text-xl font-medium text-blue sm:mb-14 sm:text-3xl">
           Bienvenue chez FlucTun
         </p>
         <form className="m-auto text-left" onSubmit={handleSubmit(onSubmit)}>
           <div className=" mb-5">
-            <label className=" text-sm sm:text-lg text-g400 font-semibold">
+            <label className=" text-sm font-semibold text-g400 sm:text-lg">
               EMAIL
             </label>
             <br />
@@ -73,7 +73,7 @@ const Login = () => {
             <ErrorMessage>{errors.email?.message}</ErrorMessage>
           </div>
           <div className=" mb-5">
-            <label className=" text-sm sm:text-lg text-g400 font-semibold">
+            <label className=" text-sm font-semibold text-g400 sm:text-lg">
               Password
             </label>
             <br />
@@ -86,8 +86,12 @@ const Login = () => {
             <ErrorMessage>{errors.password?.message}</ErrorMessage>
           </div>
 
-          <div className=" flex justify-center items-center w-full mt-10">
-            <Button className=" rounded-3xl px-24" type="submit">
+          <div className=" mt-10 flex w-full items-center justify-center">
+            <Button
+              className=" rounded-3xl px-24"
+              type="submit"
+              isLoading={login.isLoading}
+            >
               Login
             </Button>
           </div>

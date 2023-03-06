@@ -9,18 +9,6 @@ interface IProps {
 }
 
 const SideDrawer: React.FC<IProps> = ({ open, setOpen, children }) => {
-  const toggleDrawer =
-    (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
-      if (
-        event.type === "keydown" &&
-        ((event as React.KeyboardEvent).key === "Tab" ||
-          (event as React.KeyboardEvent).key === "Shift")
-      ) {
-        return;
-      }
-      setOpen(open);
-    };
-
   return (
     <div>
       <React.Fragment>

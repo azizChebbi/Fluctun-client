@@ -3,7 +3,7 @@ import ClimbingBoxLoaderfrom from "react-spinners/ClimbingBoxLoader";
 
 const FullPageSpinner = () => {
   return (
-    <div className=" flex items-center justify-center w-full h-screen">
+    <div className=" absolute top-0 right-0 z-30 flex h-screen h-screen w-screen w-full items-center justify-center">
       <ClimbingBoxLoaderfrom color={"#142B33"} size={30} />
     </div>
   );

@@ -5,146 +5,41 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import useUrlState from "@ahooksjs/use-url-state";
 import { useMutation } from "react-query";
-import useRole from "@hooks/useRole";
+import ClipLoader from "react-spinners/ClipLoader";
+import useUrlState from "@ahooksjs/use-url-state";
 import CheckOptions from "@atoms/CheckOptions";
 import FilterAccordian from "@atoms/FilterAccordian";
 import refresh from "@icons/refresh.svg";
 import { api } from "@api/index";
 import { notifyError } from "@utils/notify";
-import { QuestionType, subject } from "./Question";
+import useRole from "@hooks/useRole";
+import {
+  getDateOrderFromParams,
+  getEndDateFromParams,
+  getStartDateFromParams,
+  getTypeFromParams,
+  getLevelsFromParams,
+  getSubjectsFromParams,
+  resetAll,
+} from "@utils/filter";
 import Date from "./Date";
+import { level, Question as QuestionType, subject, URLParams } from "../types";
 
 type SubjectsObject = {
   [key in subject]: boolean;
 };
 
-type URLParams = {
-  type?: "answered" | "unanswered";
-  subjects?: subject[];
-  dateOrder?: "asc" | "desc";
-  startDate?: string;
-  endDate?: string;
-};
-
-const getTypeFromParams = (params: URLParams) => {
-  const { type } = params;
-  if (type) {
-    return {
-      "Avec réponse": type === "answered",
-      "Sans réponse": type === "unanswered",
-    };
-  }
-  return {
-    "Avec réponse": false,
-    "Sans réponse": false,
-  };
-};
-
-const getSubjectsFromParams = (params: URLParams) => {
-  const { subjects } = params;
-  if (subjects) {
-    return {
-      Mathématique: subjects.includes("Mathématique"),
-      Physique: subjects.includes("Physique"),
-      Science: subjects.includes("Science"),
-      Anglais: subjects.includes("Anglais"),
-    };
-  }
-  return {
-    Mathématique: false,
-    Physique: false,
-    Science: false,
-    Anglais: false,
-  };
-};
-
-const getDateOrderFromParams = (params: URLParams) => {
-  const { dateOrder } = params;
-  if (dateOrder) {
-    return {
-      asc: dateOrder === "asc",
-      desc: dateOrder === "desc",
-    };
-  }
-  return {
-    asc: false,
-    desc: false,
-  };
-};
-
-const getStartDateFromParams = (params: URLParams) => {
-  const { startDate } = params;
-  if (startDate) {
-    return new window.Date(startDate);
-  }
-  return null;
-};
-
-const getEndDateFromParams = (params: URLParams) => {
-  const { endDate } = params;
-  if (endDate) {
-    return new window.Date(endDate);
-  }
-  return null;
-};
-
-const resetType = (setQuestionTypes: any) => {
-  setQuestionTypes({
-    "Avec réponse": false,
-    "Sans réponse": false,
-  });
-};
-
-const resetSubjects = (setSubjects: any) => {
-  setSubjects({
-    Mathématique: false,
-    Physique: false,
-    Science: false,
-    Anglais: false,
-  });
-};
-
-const resetDateOrder = (setDateOrder: any) => {
-  setDateOrder({
-    asc: false,
-    desc: false,
-  });
-};
-
-const resetDate = (setStartDate: any, setEndDate: any) => {
-  setStartDate(null);
-  setEndDate(null);
-};
-
-const resetAll = (
-  setQuestionTypes: any,
-  setSubjects: any,
-  setDateOrder: any,
-  setStartDate: any,
-  setEndDate: any,
-  setParams: any
-) => {
-  resetType(setQuestionTypes);
-  resetSubjects(setSubjects);
-  resetDateOrder(setDateOrder);
-  resetDate(setStartDate, setEndDate);
-  setParams({
-    type: undefined,
-    subjects: undefined,
-    dateOrder: undefined,
-    startDate: undefined,
-    endDate: undefined,
-  });
-};
-
 interface IProps {
   questions: QuestionType[];
   setQuestions: Dispatch<SetStateAction<QuestionType[]>>;
+  setOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-const Filter: FC<IProps> = ({ questions, setQuestions }) => {
+const Filter: FC<IProps> = ({ setQuestions }) => {
+  // =================================================
+  // =================== STATE =======================
+  // =================================================
   const [params, setParams] = useUrlState<Partial<URLParams>>(
     {},
     {
@@ -156,12 +51,14 @@ const Filter: FC<IProps> = ({ questions, setQuestions }) => {
       },
     }
   );
+  console.log(params);
   const [questionTypes, setQuestionTypes] = React.useState(() =>
     getTypeFromParams(params)
   );
   const [subjects, setSubjects] = React.useState<SubjectsObject>(() =>
     getSubjectsFromParams(params)
   );
+  const [levels, setLevels] = React.useState(() => getLevelsFromParams(params));
   const [startDate, setStartDate] = useState<Date | null>(() =>
     getStartDateFromParams(params)
   );
@@ -173,13 +70,27 @@ const Filter: FC<IProps> = ({ questions, setQuestions }) => {
   );
   const role = useRole();
 
+  // =================================================
+  // =================== EFFECT ======================
+  // =================================================
+
+  useEffect(() => {
+    filterMuation.mutate();
+  }, []);
+
   useEffect(() => {
     const params: URLParams = {};
+
+    // QUESTION TYPE
     if (questionTypes["Avec réponse"]) {
       params.type = "answered";
     } else if (questionTypes["Sans réponse"]) {
       params.type = "unanswered";
+    } else {
+      params.type = undefined;
     }
+
+    // SUBJECTS
     const subjectsArray: subject[] = [];
     Object.entries(subjects).forEach(([key, value]) => {
       if (value) {
@@ -189,41 +100,87 @@ const Filter: FC<IProps> = ({ questions, setQuestions }) => {
 
     if (subjectsArray.length > 0) {
       params.subjects = subjectsArray;
+    } else {
+      params.subjects = undefined;
     }
+
+    // LEVELS
+    const levelsArray: level[] = [];
+    Object.entries(levels).forEach(([key, value]) => {
+      if (value) {
+        levelsArray.push(key as level);
+      }
+    });
+
+    if (levelsArray.length > 0) {
+      params.levels = levelsArray;
+    } else {
+      params.levels = undefined;
+    }
+
+    // DATE ORDER
     if (dateOrder["asc"]) {
       params.dateOrder = "asc";
     } else if (dateOrder["desc"]) {
       params.dateOrder = "desc";
+    } else {
+      params.dateOrder = undefined;
     }
+
+    // DATE
     if (startDate) {
       params.startDate = startDate.toString();
+    } else {
+      params.startDate = undefined;
     }
     if (endDate) {
       params.endDate = endDate.toString();
+    } else {
+      params.endDate = undefined;
     }
+
     setParams(params);
-  }, [questionTypes, subjects, dateOrder, startDate, endDate]);
+  }, [questionTypes, subjects, levels, dateOrder, startDate, endDate]);
+
+  // =================================================
+  // =================== MUTATION ====================
+  // =================================================
 
   const filterMuation = useMutation(
     () => api.get("/questions", { params: params }),
     {
       onSuccess: (data) => {
-        console.log(data);
+        setQuestions(data.data);
       },
-      onError: (error) => {
-        console.log(error);
+      onError: () => {
         notifyError("Une erreur est survenue");
       },
     }
   );
 
+  // =================================================
+  // =================== HANDLERS ====================
+  // =================================================
+
   const handleFilter = () => {
     filterMuation.mutate();
   };
 
+  const handleReset = () => {
+    resetAll(
+      setQuestionTypes,
+      setSubjects,
+      setDateOrder,
+      setStartDate,
+      setEndDate,
+      setParams
+    );
+    handleFilter();
+  };
+
   return (
     <div className=" pb-12">
-      <p className=" text-base md:text-xl text-orange text-center underline underline-offset-1 my-12">
+      <p className=" my-12 text-center text-base text-orange underline underline-offset-1 md:text-xl">
         Les filtres
       </p>
       <div>
@@ -233,6 +190,11 @@ const Filter: FC<IProps> = ({ questions, setQuestions }) => {
         {role === "student" && (
           <FilterAccordian title="Matiére">
             <CheckOptions state={subjects} setState={setSubjects} isMultiple />
+          </FilterAccordian>
+        )}
+        {role === "teacher" && (
+          <FilterAccordian title="Niveau">
+            <CheckOptions state={levels} setState={setLevels} isMultiple />
           </FilterAccordian>
         )}
         <FilterAccordian title="Date">
@@ -247,23 +209,19 @@ const Filter: FC<IProps> = ({ questions, setQuestions }) => {
         <button
           type="button"
           onClick={handleFilter}
-          className=" text-orange bg-[#FFF4F2] text-base md:text-lg font-medium py-6 px-4 w-full border-y border-[#E2E2E2] "
+          className=" flex h-20 w-full items-center justify-center border-y border-[#E2E2E2] bg-[#FFF4F2] text-base font-medium text-orange md:text-lg "
+          disabled={filterMuation.isLoading}
         >
-          Appliquer les filtres
+          {filterMuation.isLoading ? (
+            <ClipLoader color="#F68E79" size="25px" />
+          ) : (
+            <p>Appliquer les filtres</p>
+          )}
         </button>
         <button
           type="button"
-          onClick={() => {
-            resetAll(
-              setQuestionTypes,
-              setSubjects,
-              setDateOrder,
-              setStartDate,
-              setEndDate,
-              setParams
-            );
-          }}
-          className=" flex items-center justify-center gap-2 text-[#A0A0A0]  text-base md:text-lg font-medium py-6 px-4 w-full "
+          onClick={handleReset}
+          className=" flex h-20 w-full items-center justify-center gap-2  py-6 px-4 text-base font-medium text-[#A0A0A0] md:text-lg "
         >
           <img src={refresh} />
           <span>Réinitialiser</span>

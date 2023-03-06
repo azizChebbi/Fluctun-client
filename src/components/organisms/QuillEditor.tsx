@@ -31,9 +31,10 @@ const formats = [
 interface IProps {
   value: string;
   setValue: Dispatch<SetStateAction<string>>;
+  placeholder?: string;
 }
 
-const QuillEditor: FC<IProps> = ({ value, setValue }) => {
+const QuillEditor: FC<IProps> = ({ value, setValue, placeholder }) => {
   const reactQuillRef = useRef<ReactQuill>(null);
 
   // ================================================
@@ -186,49 +187,43 @@ const QuillEditor: FC<IProps> = ({ value, setValue }) => {
     input.setAttribute("type", "file");
     input.setAttribute("accept", "image/*");
     input.click();
-    const quill = reactQuillRef.current?.getEditor();
-    const range = quill?.getSelection(true);
     input.onchange = async () => {
-      // if (input.files?.length) {
-      //   const file: File = input.files[0];
-      //   console.log(file);
-      //   const formData = new FormData();
-      //   formData.append("image", file);
-      //   try {
-      //     const { data } = await uploadImageMutation.mutateAsync(formData);
-      //     const quill = reactQuillRef.current?.getEditor();
-      //     const range = quill?.getSelection(true);
-      //     console.log("range", range);
-      //     quill?.insertEmbed(
-      //       range?.index || 0,
-      //       "image",
-      //       data?.Location || "https://via.placeholder.com/150"
-      //     );
-      //   } catch (error) {
-      //     notifyError("Un erreur est survenue lors de l'upload de l'image");
-      //   }
-      // }
-      quill?.insertEmbed(
-        range?.index || 0,
-        "image",
-        "https://via.placeholder.com/150"
-      );
+      if (input.files?.length) {
+        const file: File = input.files[0];
+        console.log(file);
+        const formData = new FormData();
+        formData.append("image", file);
+        try {
+          const { data } = await uploadImageMutation.mutateAsync(formData);
+          const quill = reactQuillRef.current?.getEditor();
+          const range = quill?.getSelection(true);
+          console.log("range", range);
+          quill?.insertEmbed(
+            range?.index || 0,
+            "image",
+            data?.Location || "https://via.placeholder.com/150"
+          );
+        } catch (error) {
+          notifyError("Un erreur est survenue lors de l'upload de l'image");
+        }
+      }
     };
   }
 
   return (
     <div className=" relative">
       <ReactQuill
+        style={{ background: "white" }}
         ref={reactQuillRef}
         theme="snow"
         value={value}
         modules={modules}
         formats={formats}
         onChange={setValue}
-        placeholder="Ecrivez votre question ici..."
+        placeholder={placeholder}
       />
       {uploadImageMutation.isLoading && (
-        <div className=" flex items-center justify-center bg-[rgba(0,0,0,0.3)] absolute top-0 left-0 right-0 bottom-0">
+        <div className=" absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center bg-[rgba(0,0,0,0.3)]">
           <ClipLoader color="white" size="40px" />
         </div>
       )}
