@@ -18,7 +18,8 @@ const Profile = () => {
     <div className=" grid h-screen grid-cols-[1fr] overflow-hidden md:grid-rows-[100px_1fr]">
       {matches ? <DesktopNavbar /> : <MobileNavbar />}
       <div className=" overflow-scroll pt-24 md:pb-24 ">
-        {role == "student" ? <StudentProfile /> : <TeacherProfile />}
+        {role == "student" && <StudentProfile />}
+        {role == "teacher" && <TeacherProfile />}
         <div className=" my-6 pr-6 text-right md:m-auto md:mt-6 md:w-[80%] md:pr-0">
           <Link
             to="/logout"

@@ -1,12 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import { Question as QuestionType } from "@features/questions/types";
 import QuestionsList from "@features/questions/components/QuestionsList";
 import Filter from "@features/questions/components/Filter";
 import SideDrawer from "@features/questions/components/Drawer";
+import QuestionSkeleton from "@features/questions/components/QuestionSkeleton";
 
 const Questions = () => {
   const [open, setOpen] = React.useState(false);
   const [questions, setQuestions] = React.useState<QuestionType[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   return (
     <div className="grid h-full grid-rows-[1fr] md:grid-cols-[1fr_280px]">
       <div className=" overflow-scroll border-[#AFAFAF]  px-3 md:border-r md:p-12 md:px-6 md:py-6">
@@ -21,18 +23,18 @@ const Questions = () => {
             Filtrer
           </p>
         </div>
-        {/* {questions.length == 0 ? (
+        {isLoading ? (
           [0, 1, 2, 3].map((i) => <QuestionSkeleton key={i} />)
         ) : (
           <QuestionsList questions={questions} />
-        )} */}
-        <QuestionsList questions={questions} />
+        )}
       </div>
       <div className=" hidden overflow-scroll  md:block">
         <Filter
           questions={questions}
           setQuestions={setQuestions}
           setOpen={setOpen}
+          setIsLoading={setIsLoading}
         />
       </div>
       <SideDrawer open={open} setOpen={setOpen}>
@@ -40,6 +42,7 @@ const Questions = () => {
           questions={questions}
           setQuestions={setQuestions}
           setOpen={setOpen}
+          setIsLoading={setIsLoading}
         />
       </SideDrawer>
     </div>

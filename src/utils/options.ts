@@ -349,3 +349,15 @@ export const levelOptions: LevelOption[] = [
   { label: "4éme année techniques", value: "4éme année techniques" },
   { label: "4éme année informatique", value: "4éme année informatique" },
 ];
+
+// define function that takes in a level and returns an array of subjects
+export const getSubjects = (level: level): subject[] => {
+  return classes[level];
+};
+
+// define function that takes in a subject and returns an array of levels
+export const getLevels = (subject: subject): level[] => {
+  return Object.keys(classes).filter((level) =>
+    classes[level as level].includes(subject)
+  ) as level[];
+};

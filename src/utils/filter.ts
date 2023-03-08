@@ -1,10 +1,17 @@
 import { Dispatch, SetStateAction } from "react";
 import { URLParams } from "@features/questions/types";
-import { level, levelOptions, subject, subjectOptions } from "./options";
+import {
+  getLevels,
+  getSubjects,
+  level,
+  levelOptions,
+  subject,
+  subjectOptions,
+} from "./options";
 
 // define generic option of key and value
 type Option<T extends string> = {
-  [key in T]: boolean;
+  [key in T]?: boolean;
 };
 
 type TypeOptions = Option<"Avec réponse" | "Sans réponse">;
@@ -55,36 +62,42 @@ const getTypeFromParams = (params: URLParams): TypeOptions => {
   };
 };
 
-const getSubjectsFromParams = (params: URLParams): SubjectsOptions => {
+const getSubjectsFromParams = (
+  params: URLParams,
+  level: level
+): SubjectsOptions => {
   const { subjects } = params;
   if (subjects) {
     const acc: Option<subject> = {} as Option<subject>;
-    subjectOptions.forEach((subject) => {
-      acc[subject.label] = subjects.includes(subject.label);
+    getSubjects(level).forEach((subject) => {
+      acc[subject] = subjects.includes(subject);
     });
     return acc;
   }
   // return all subjects as false
   const newSubjects: Option<subject> = {} as Option<subject>;
-  subjectOptions.forEach((subject) => {
-    newSubjects[subject.label] = false;
+  getSubjects(level).forEach((subject) => {
+    newSubjects[subject] = false;
   });
   return newSubjects;
 };
 
-const getLevelsFromParams = (params: URLParams): LevelsOptions => {
+const getLevelsFromParams = (
+  params: URLParams,
+  subject: subject
+): LevelsOptions => {
   const { levels } = params;
   if (levels) {
     const acc: Option<level> = {} as Option<level>;
-    levelOptions.forEach((level) => {
-      acc[level.label] = levels.includes(level.label);
+    getLevels(subject).forEach((level) => {
+      acc[level] = levels.includes(level);
     });
     return acc;
   }
   // return all levels as false
   const newLevels: Option<level> = {} as Option<level>;
-  levelOptions.forEach((level) => {
-    newLevels[level.label] = false;
+  getLevels(subject).forEach((level) => {
+    newLevels[level] = false;
   });
   return newLevels;
 };

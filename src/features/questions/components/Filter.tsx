@@ -5,7 +5,7 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import { useMutation } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import ClipLoader from "react-spinners/ClipLoader";
 import useUrlState from "@ahooksjs/use-url-state";
 import CheckOptions from "@atoms/CheckOptions";
@@ -19,29 +19,57 @@ import {
   getEndDateFromParams,
   getStartDateFromParams,
   getTypeFromParams,
-  getLevelsFromParams,
   getSubjectsFromParams,
+  getLevelsFromParams,
   resetAll,
 } from "@utils/filter";
 import { subject, level } from "@utils/options";
+import usePayload from "@hooks/usePayload";
 import Date from "./Date";
 import { Question as QuestionType, URLParams } from "../types";
 
 type SubjectsObject = {
-  [key in subject]: boolean;
+  [key in subject]?: boolean;
 };
 
 type LevelsObject = {
-  [key in level]: boolean;
+  [key in level]?: boolean;
 };
 
 interface IProps {
   questions: QuestionType[];
   setQuestions: Dispatch<SetStateAction<QuestionType[]>>;
   setOpen: Dispatch<SetStateAction<boolean>>;
+  setIsLoading: Dispatch<SetStateAction<boolean>>;
 }
 
-const Filter: FC<IProps> = ({ setQuestions }) => {
+const Filter: FC<IProps> = ({ setQuestions, setIsLoading }) => {
+  // =================================================
+  // =================== PRE SETUP ===================
+  // =================================================
+  const payload = usePayload();
+  useQuery(
+    [payload.role, payload.id],
+    () => api.get("/profile/" + payload.id),
+    {
+      onSuccess: (data) => {
+        console.log(data);
+        if (payload.role == "student") {
+          setSubjects(() =>
+            getSubjectsFromParams(params, data?.data.level || "")
+          );
+        } else if (payload.role == "teacher") {
+          setLevels(() =>
+            getLevelsFromParams(params, data?.data.subject || "")
+          );
+        }
+      },
+      onError: () => {
+        notifyError("Une erreur s'est produite");
+      },
+    }
+  );
+
   // =================================================
   // =================== STATE =======================
   // =================================================
@@ -56,16 +84,11 @@ const Filter: FC<IProps> = ({ setQuestions }) => {
       },
     }
   );
-  console.log(params);
   const [questionTypes, setQuestionTypes] = React.useState(() =>
     getTypeFromParams(params)
   );
-  const [subjects, setSubjects] = React.useState<SubjectsObject>(() =>
-    getSubjectsFromParams(params)
-  );
-  const [levels, setLevels] = React.useState<LevelsObject>(() =>
-    getLevelsFromParams(params)
-  );
+  const [subjects, setSubjects] = React.useState<SubjectsObject>({});
+  const [levels, setLevels] = React.useState<LevelsObject>({});
   const [startDate, setStartDate] = useState<Date | null>(() =>
     getStartDateFromParams(params)
   );
@@ -158,6 +181,7 @@ const Filter: FC<IProps> = ({ setQuestions }) => {
     {
       onSuccess: (data) => {
         setQuestions(data.data);
+        setIsLoading(false);
       },
       onError: () => {
         notifyError("Une erreur est survenue");
