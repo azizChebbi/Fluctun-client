@@ -1,5 +1,5 @@
 import React, { FC, useState } from "react";
-import profileImg from "@images/profile.png";
+import profilePicture from "@images/profile.svg";
 import EditWrapper from "./EditWrapper";
 import EditProfilePicture from "./EditProfilePicture";
 
@@ -17,7 +17,7 @@ const ProfilePicture: FC<IProps> = ({ photo }) => {
       >
         <div className=" w-max overflow-hidden rounded-[50%]">
           <img
-            src={photo || profileImg}
+            src={photo || profilePicture}
             className=" h-28 w-28 object-cover md:h-40 md:w-40"
           />
         </div>

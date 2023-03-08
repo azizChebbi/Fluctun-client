@@ -9,7 +9,6 @@ const App = () => {
   const { token } = useAuth();
   const payload = usePayload();
   console.log(payload);
-  //  hi my name is hdoknqsdnrbaieznfgennscjxqbx,;qnwaozidnzeudn yOU'RE LY EDQNDQSKJNAZODINAZDKNSQLXNQSXXJBWAWSZGDEGFGGGHFJDSBQ,AZNEWAAQWSZXE
   useEffect(() => {
     OneSignal.init({
       appId: "d3405cc3-6fba-4cc9-9baf-fae5ad04f9d4",

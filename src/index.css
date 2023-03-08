@@ -42,3 +42,15 @@ html {
 .unanswered-ticket {
   background-image: linear-gradient(#ba3f3f, #ff7d7d);
 }
+
+.orangeBackground {
+  background-image: url("./assets/icons/bgOrange.svg");
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.blueBackground {
+  background-image: url("./assets/icons/bgBlue.svg");
+  background-repeat: no-repeat;
+  background-size: cover;
+}

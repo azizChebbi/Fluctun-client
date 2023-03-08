@@ -23,11 +23,16 @@ import {
   getSubjectsFromParams,
   resetAll,
 } from "@utils/filter";
+import { subject, level } from "@utils/options";
 import Date from "./Date";
-import { level, Question as QuestionType, subject, URLParams } from "../types";
+import { Question as QuestionType, URLParams } from "../types";
 
 type SubjectsObject = {
   [key in subject]: boolean;
+};
+
+type LevelsObject = {
+  [key in level]: boolean;
 };
 
 interface IProps {
@@ -58,7 +63,9 @@ const Filter: FC<IProps> = ({ setQuestions }) => {
   const [subjects, setSubjects] = React.useState<SubjectsObject>(() =>
     getSubjectsFromParams(params)
   );
-  const [levels, setLevels] = React.useState(() => getLevelsFromParams(params));
+  const [levels, setLevels] = React.useState<LevelsObject>(() =>
+    getLevelsFromParams(params)
+  );
   const [startDate, setStartDate] = useState<Date | null>(() =>
     getStartDateFromParams(params)
   );
@@ -170,6 +177,7 @@ const Filter: FC<IProps> = ({ setQuestions }) => {
     resetAll(
       setQuestionTypes,
       setSubjects,
+      setLevels,
       setDateOrder,
       setStartDate,
       setEndDate,

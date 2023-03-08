@@ -1,5 +1,4 @@
-export type subject = "Mathématique" | "Anglais" | "Science" | "Physique";
-export type level = "1ére année" | "2éme année" | "3éme année" | "4éme année";
+import { subject, level } from "@utils/options";
 
 export type URLParams = {
   type?: "answered" | "unanswered";

@@ -38,6 +38,7 @@ const EditProfileForm: FC<IProps> = (props) => {
       onSuccess: () => {
         notifySuccess("Profile mis à jour avec succès");
         queryClient.invalidateQueries("student");
+        queryClient.invalidateQueries("teacher");
         props.setEditMode(false);
       },
       onError: () => {

@@ -6,6 +6,7 @@ import logo from "@icons/logo.svg";
 import usePayload from "@hooks/usePayload";
 import { api } from "@api/index";
 import { notifyError } from "@utils/notify";
+import profilePicture from "@images/profile.svg";
 
 const MobileNavbar = () => {
   const { id } = usePayload();
@@ -28,10 +29,7 @@ const MobileNavbar = () => {
         <Avatar
           sx={{ width: 30, height: 30 }}
           alt="E"
-          src={
-            student.data?.data.photo ||
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSzHQv_th9wq3ivQ1CVk7UZRxhbPq64oQrg5Q&usqp=CAU"
-          }
+          src={student.data?.data.photo || profilePicture}
         />
       </Link>
     </nav>

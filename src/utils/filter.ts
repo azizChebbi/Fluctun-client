@@ -1,6 +1,47 @@
+import { Dispatch, SetStateAction } from "react";
 import { URLParams } from "@features/questions/types";
+import { level, levelOptions, subject, subjectOptions } from "./options";
 
-const getTypeFromParams = (params: URLParams) => {
+// define generic option of key and value
+type Option<T extends string> = {
+  [key in T]: boolean;
+};
+
+type TypeOptions = Option<"Avec réponse" | "Sans réponse">;
+type SubjectsOptions = Option<subject>;
+type LevelsOptions = Option<level>;
+type DateOrderOptions = Option<"asc" | "desc">;
+
+// ================================
+// ========= TYPES ================
+// ================================
+type SetQuestionTypes = Dispatch<SetStateAction<TypeOptions>>;
+type SetSubjects = Dispatch<SetStateAction<Option<subject>>>;
+type SetLevels = Dispatch<SetStateAction<Option<level>>>;
+type SetDateOrder = Dispatch<SetStateAction<Option<"asc" | "desc">>>;
+type SetStartDate = Dispatch<SetStateAction<Date | null>>;
+type SetEndDate = Dispatch<SetStateAction<Date | null>>;
+type SetParams = Dispatch<SetStateAction<URLParams>>;
+type ResetAll = (
+  setQuestionTypes: SetQuestionTypes,
+  setSubjects: SetSubjects,
+  setLevels: SetLevels,
+  setDateOrder: SetDateOrder,
+  setStartDate: SetStartDate,
+  setEndDate: SetEndDate,
+  setParams: SetParams
+) => void;
+type resetType = (setQuestionTypes: SetQuestionTypes) => void;
+type resetSubjects = (setSubjects: SetSubjects) => void;
+type resetLevels = (setLevels: SetLevels) => void;
+type resetDateOrder = (setDateOrder: SetDateOrder) => void;
+type resetDate = (setStartDate: SetStartDate, setEndDate: SetEndDate) => void;
+
+// ==================================
+// ============ GET FUNCTIONS ===========
+// ==================================
+
+const getTypeFromParams = (params: URLParams): TypeOptions => {
   const { type } = params;
   if (type) {
     return {
@@ -14,43 +55,41 @@ const getTypeFromParams = (params: URLParams) => {
   };
 };
 
-const getSubjectsFromParams = (params: URLParams) => {
+const getSubjectsFromParams = (params: URLParams): SubjectsOptions => {
   const { subjects } = params;
   if (subjects) {
-    return {
-      Mathématique: subjects.includes("Mathématique"),
-      Physique: subjects.includes("Physique"),
-      Science: subjects.includes("Science"),
-      Anglais: subjects.includes("Anglais"),
-    };
+    const acc: Option<subject> = {} as Option<subject>;
+    subjectOptions.forEach((subject) => {
+      acc[subject.label] = subjects.includes(subject.label);
+    });
+    return acc;
   }
-  return {
-    Mathématique: false,
-    Physique: false,
-    Science: false,
-    Anglais: false,
-  };
+  // return all subjects as false
+  const newSubjects: Option<subject> = {} as Option<subject>;
+  subjectOptions.forEach((subject) => {
+    newSubjects[subject.label] = false;
+  });
+  return newSubjects;
 };
 
-const getLevelsFromParams = (params: URLParams) => {
+const getLevelsFromParams = (params: URLParams): LevelsOptions => {
   const { levels } = params;
   if (levels) {
-    return {
-      "1ére année": levels.includes("1ére année"),
-      "2éme année": levels.includes("2éme année"),
-      "3éme année": levels.includes("3éme année"),
-      "4éme année": levels.includes("4éme année"),
-    };
+    const acc: Option<level> = {} as Option<level>;
+    levelOptions.forEach((level) => {
+      acc[level.label] = levels.includes(level.label);
+    });
+    return acc;
   }
-  return {
-    "1ére année": false,
-    "2éme année": false,
-    "3éme année": false,
-    "4éme année": false,
-  };
+  // return all levels as false
+  const newLevels: Option<level> = {} as Option<level>;
+  levelOptions.forEach((level) => {
+    newLevels[level.label] = false;
+  });
+  return newLevels;
 };
 
-const getDateOrderFromParams = (params: URLParams) => {
+const getDateOrderFromParams = (params: URLParams): DateOrderOptions => {
   const { dateOrder } = params;
   if (dateOrder) {
     return {
@@ -80,44 +119,59 @@ const getEndDateFromParams = (params: URLParams) => {
   return null;
 };
 
-const resetType = (setQuestionTypes: any) => {
+// ==================================
+// ============ RESET FUNCTIONS ===========
+// ==================================
+
+const resetType = (setQuestionTypes: Dispatch<SetStateAction<TypeOptions>>) => {
   setQuestionTypes({
     "Avec réponse": false,
     "Sans réponse": false,
   });
 };
 
-const resetSubjects = (setSubjects: any) => {
-  setSubjects({
-    Mathématique: false,
-    Physique: false,
-    Science: false,
-    Anglais: false,
+const resetSubjects = (
+  setSubjects: Dispatch<SetStateAction<Option<subject>>>
+) => {
+  const newSubjects: Option<subject> = {} as Option<subject>;
+  subjectOptions.forEach((subject) => {
+    newSubjects[subject.label] = false;
   });
+  setSubjects(newSubjects);
 };
 
-const resetDateOrder = (setDateOrder: any) => {
+const resetLevels = (setLevels: Dispatch<SetStateAction<Option<level>>>) => {
+  const newLevels: Option<level> = {} as Option<level>;
+  levelOptions.forEach((level) => {
+    newLevels[level.label] = false;
+  });
+  setLevels(newLevels);
+};
+
+const resetDateOrder = (setDateOrder: SetDateOrder) => {
   setDateOrder({
     asc: false,
     desc: false,
   });
 };
 
-const resetDate = (setStartDate: any, setEndDate: any) => {
+const resetDate = (setStartDate: SetStartDate, setEndDate: SetEndDate) => {
   setStartDate(null);
   setEndDate(null);
 };
 
-const resetAll = (
-  setQuestionTypes: any,
-  setSubjects: any,
-  setDateOrder: any,
-  setStartDate: any,
-  setEndDate: any,
-  setParams: any
+const resetAll: ResetAll = (
+  setQuestionTypes,
+  setSubjects,
+  setLevels,
+  setDateOrder,
+  setStartDate,
+  setEndDate,
+  setParams
 ) => {
   resetType(setQuestionTypes);
   resetSubjects(setSubjects);
+  resetLevels(setLevels);
   resetDateOrder(setDateOrder);
   resetDate(setStartDate, setEndDate);
   setParams({
@@ -128,6 +182,10 @@ const resetAll = (
     endDate: undefined,
   });
 };
+
+// ==================================
+// ============ EXPORTS ===========
+// ==================================
 
 export {
   getTypeFromParams,

@@ -10,7 +10,7 @@ const MobileLayout: FC<IProps> = ({ children }) => {
   return (
     <div>
       <MobileNavbar />
-      <div className=" mb-28 mt-24 mx-4">{children}</div>
+      <div className=" bg-red mx-4 mb-28 mt-24 h-screen">{children}</div>
       <BottomNavigation />
     </div>
   );

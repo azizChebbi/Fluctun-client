@@ -9,6 +9,7 @@ import { api } from "@api/index";
 import usePayload from "@hooks/usePayload";
 import { notifyError } from "@utils/notify";
 import DateFomratted from "@atoms/DateFomratted";
+import profilePicture from "@images/profile.svg";
 import MetaData from "./MetaData";
 import ProfileQuestions from "./ProfileQuestions";
 import ProfilePicture from "./ProfilePicture";
@@ -35,7 +36,7 @@ const StudentProfile = () => {
     <>
       <div className=" my-8 mx-2 md:m-auto md:w-[80%]">
         <div className=" relative h-28 w-full rounded border border-[#E2E2E2] bg-[#C3E6FF] md:h-48">
-          <ProfilePicture photo={student?.photo} />
+          <ProfilePicture photo={student?.photo || profilePicture} />
         </div>
         <div className=" relative rounded md:flex md:border md:border-t-0 md:border-[#E2E2E2] md:bg-white md:px-8">
           <div className=" z-20 -mt-4 rounded border border-[#E2E2E2] bg-white px-6 py-8 pt-0 md:mt-0 md:flex-1 md:border-l-0 md:border-t-0 md:border-b-0 md:pr-12">

@@ -19,6 +19,7 @@ const EditProfilePicture: FC<IProps> = ({ photo, setEditMode }) => {
     {
       onSuccess: () => {
         queryClient.invalidateQueries("student");
+        queryClient.invalidateQueries("teacher");
         setEditMode(false);
       },
       onError: () => {
@@ -32,6 +33,8 @@ const EditProfilePicture: FC<IProps> = ({ photo, setEditMode }) => {
     {
       onSuccess: () => {
         queryClient.invalidateQueries("student");
+        queryClient.invalidateQueries("teacher");
+
         setEditMode(false);
       },
       onError: () => {
