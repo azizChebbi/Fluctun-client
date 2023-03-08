@@ -18,6 +18,7 @@ const MobileNavbar = () => {
     onError: () => {
       notifyError("Un erreur s'est produite");
     },
+    refetchOnWindowFocus: false,
   });
 
   return (

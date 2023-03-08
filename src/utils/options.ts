@@ -351,12 +351,14 @@ export const levelOptions: LevelOption[] = [
 ];
 
 // define function that takes in a level and returns an array of subjects
-export const getSubjects = (level: level): subject[] => {
+export const getSubjects = (level: level | undefined): subject[] => {
+  if (!level) return [];
   return classes[level];
 };
 
 // define function that takes in a subject and returns an array of levels
-export const getLevels = (subject: subject): level[] => {
+export const getLevels = (subject: subject | undefined): level[] => {
+  if (!subject) return [];
   return Object.keys(classes).filter((level) =>
     classes[level as level].includes(subject)
   ) as level[];

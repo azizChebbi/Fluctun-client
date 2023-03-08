@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Question as QuestionType } from "@features/questions/types";
 import QuestionsList from "@features/questions/components/QuestionsList";
-import Filter from "@features/questions/components/Filter";
+import Filter from "@features/questions/components/FilterController";
 import SideDrawer from "@features/questions/components/Drawer";
 import QuestionSkeleton from "@features/questions/components/QuestionSkeleton";
 

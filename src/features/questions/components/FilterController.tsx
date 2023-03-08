@@ -5,15 +5,10 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import { useMutation, useQuery } from "react-query";
-import ClipLoader from "react-spinners/ClipLoader";
+import { useMutation, useQueries } from "react-query";
 import useUrlState from "@ahooksjs/use-url-state";
-import CheckOptions from "@atoms/CheckOptions";
-import FilterAccordian from "@atoms/FilterAccordian";
-import refresh from "@icons/refresh.svg";
 import { api } from "@api/index";
 import { notifyError } from "@utils/notify";
-import useRole from "@hooks/useRole";
 import {
   getDateOrderFromParams,
   getEndDateFromParams,
@@ -22,19 +17,12 @@ import {
   getSubjectsFromParams,
   getLevelsFromParams,
   resetAll,
+  Option,
 } from "@utils/filter";
 import { subject, level } from "@utils/options";
 import usePayload from "@hooks/usePayload";
-import Date from "./Date";
+import FilterUI from "./FilterUI";
 import { Question as QuestionType, URLParams } from "../types";
-
-type SubjectsObject = {
-  [key in subject]?: boolean;
-};
-
-type LevelsObject = {
-  [key in level]?: boolean;
-};
 
 interface IProps {
   questions: QuestionType[];
@@ -48,27 +36,42 @@ const Filter: FC<IProps> = ({ setQuestions, setIsLoading }) => {
   // =================== PRE SETUP ===================
   // =================================================
   const payload = usePayload();
-  useQuery(
-    [payload.role, payload.id],
-    () => api.get("/profile/" + payload.id),
+
+  const queryResults = useQueries([
     {
-      onSuccess: (data) => {
-        console.log(data);
-        if (payload.role == "student") {
-          setSubjects(() =>
-            getSubjectsFromParams(params, data?.data.level || "")
-          );
-        } else if (payload.role == "teacher") {
-          setLevels(() =>
-            getLevelsFromParams(params, data?.data.subject || "")
-          );
-        }
-      },
-      onError: () => {
-        notifyError("Une erreur s'est produite");
-      },
+      queryKey: [payload.role, payload.id],
+      queryFn: () => api.get("/profile/" + payload.id),
+    },
+    {
+      queryKey: "subjects",
+      queryFn: () => api.get("/documents/subjects"),
+    },
+    {
+      queryKey: "levels",
+      queryFn: () => api.get("/documents/levels"),
+    },
+  ]);
+
+  useEffect(() => {
+    if (
+      queryResults[0].isSuccess &&
+      (queryResults[1].isSuccess || queryResults[2].isSuccess)
+    ) {
+      const user = queryResults[0].data?.data;
+      const existedSubjects = queryResults[1].data?.data;
+      const existedLevels = queryResults[2].data?.data;
+      setSubjects(() =>
+        getSubjectsFromParams(params, user.level || "", existedSubjects || [])
+      );
+      setLevels(() =>
+        getLevelsFromParams(params, user.subject || "", existedLevels || [])
+      );
     }
-  );
+  }, [
+    queryResults[0].isSuccess,
+    queryResults[1].isSuccess,
+    queryResults[2].isSuccess,
+  ]);
 
   // =================================================
   // =================== STATE =======================
@@ -87,8 +90,8 @@ const Filter: FC<IProps> = ({ setQuestions, setIsLoading }) => {
   const [questionTypes, setQuestionTypes] = React.useState(() =>
     getTypeFromParams(params)
   );
-  const [subjects, setSubjects] = React.useState<SubjectsObject>({});
-  const [levels, setLevels] = React.useState<LevelsObject>({});
+  const [subjects, setSubjects] = React.useState<Option<subject>>({});
+  const [levels, setLevels] = React.useState<Option<level>>({});
   const [startDate, setStartDate] = useState<Date | null>(() =>
     getStartDateFromParams(params)
   );
@@ -98,7 +101,6 @@ const Filter: FC<IProps> = ({ setQuestions, setIsLoading }) => {
   const [dateOrder, setDateOrder] = React.useState(() =>
     getDateOrderFromParams(params)
   );
-  const role = useRole();
 
   // =================================================
   // =================== EFFECT ======================
@@ -111,7 +113,7 @@ const Filter: FC<IProps> = ({ setQuestions, setIsLoading }) => {
   useEffect(() => {
     const params: URLParams = {};
 
-    // QUESTION TYPE
+    // ================= DATE ORDER =================
     if (questionTypes["Avec réponse"]) {
       params.type = "answered";
     } else if (questionTypes["Sans réponse"]) {
@@ -120,7 +122,7 @@ const Filter: FC<IProps> = ({ setQuestions, setIsLoading }) => {
       params.type = undefined;
     }
 
-    // SUBJECTS
+    // ================= SUBJECTS =================
     const subjectsArray: subject[] = [];
     Object.entries(subjects).forEach(([key, value]) => {
       if (value) {
@@ -134,7 +136,7 @@ const Filter: FC<IProps> = ({ setQuestions, setIsLoading }) => {
       params.subjects = undefined;
     }
 
-    // LEVELS
+    // ================= LEVELS =================
     const levelsArray: level[] = [];
     Object.entries(levels).forEach(([key, value]) => {
       if (value) {
@@ -148,7 +150,7 @@ const Filter: FC<IProps> = ({ setQuestions, setIsLoading }) => {
       params.levels = undefined;
     }
 
-    // DATE ORDER
+    // ================= DATE ORDER =================
     if (dateOrder["asc"]) {
       params.dateOrder = "asc";
     } else if (dateOrder["desc"]) {
@@ -157,7 +159,7 @@ const Filter: FC<IProps> = ({ setQuestions, setIsLoading }) => {
       params.dateOrder = undefined;
     }
 
-    // DATE
+    // ================= DATE =================
     if (startDate) {
       params.startDate = startDate.toString();
     } else {
@@ -211,55 +213,23 @@ const Filter: FC<IProps> = ({ setQuestions, setIsLoading }) => {
   };
 
   return (
-    <div className=" pb-12">
-      <p className=" my-12 text-center text-base text-orange underline underline-offset-1 md:text-xl">
-        Les filtres
-      </p>
-      <div>
-        <FilterAccordian title="Type" isExpanded>
-          <CheckOptions state={questionTypes} setState={setQuestionTypes} />
-        </FilterAccordian>
-        {role === "student" && (
-          <FilterAccordian title="Matiére">
-            <CheckOptions state={subjects} setState={setSubjects} isMultiple />
-          </FilterAccordian>
-        )}
-        {role === "teacher" && (
-          <FilterAccordian title="Niveau">
-            <CheckOptions state={levels} setState={setLevels} isMultiple />
-          </FilterAccordian>
-        )}
-        <FilterAccordian title="Date">
-          <Date
-            startDate={startDate}
-            setStartDate={setStartDate}
-            endDate={endDate}
-            setEndDate={setEndDate}
-          />
-          <CheckOptions state={dateOrder} setState={setDateOrder} />
-        </FilterAccordian>
-        <button
-          type="button"
-          onClick={handleFilter}
-          className=" flex h-20 w-full items-center justify-center border-y border-[#E2E2E2] bg-[#FFF4F2] text-base font-medium text-orange md:text-lg "
-          disabled={filterMuation.isLoading}
-        >
-          {filterMuation.isLoading ? (
-            <ClipLoader color="#F68E79" size="25px" />
-          ) : (
-            <p>Appliquer les filtres</p>
-          )}
-        </button>
-        <button
-          type="button"
-          onClick={handleReset}
-          className=" flex h-20 w-full items-center justify-center gap-2  py-6 px-4 text-base font-medium text-[#A0A0A0] md:text-lg "
-        >
-          <img src={refresh} />
-          <span>Réinitialiser</span>
-        </button>
-      </div>
-    </div>
+    <FilterUI
+      questionTypes={questionTypes}
+      setQuestionTypes={setQuestionTypes}
+      subjects={subjects}
+      setSubjects={setSubjects}
+      levels={levels}
+      setLevels={setLevels}
+      startDate={startDate}
+      setStartDate={setStartDate}
+      endDate={endDate}
+      setEndDate={setEndDate}
+      dateOrder={dateOrder}
+      setDateOrder={setDateOrder}
+      handleFilter={handleFilter}
+      handleReset={handleReset}
+      isLoading={filterMuation.isLoading}
+    />
   );
 };
 

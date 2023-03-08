@@ -1,23 +1,16 @@
 import { Dispatch, SetStateAction } from "react";
 import { URLParams } from "@features/questions/types";
-import {
-  getLevels,
-  getSubjects,
-  level,
-  levelOptions,
-  subject,
-  subjectOptions,
-} from "./options";
+import { getLevels, getSubjects, level, levelOptions, subject, subjectOptions } from "./options";
 
 // define generic option of key and value
-type Option<T extends string> = {
+export type Option<T extends string> = {
   [key in T]?: boolean;
 };
 
-type TypeOptions = Option<"Avec réponse" | "Sans réponse">;
-type SubjectsOptions = Option<subject>;
-type LevelsOptions = Option<level>;
-type DateOrderOptions = Option<"asc" | "desc">;
+export type TypeOptions = Option<"Avec réponse" | "Sans réponse">;
+export type SubjectsOptions = Option<subject>;
+export type LevelsOptions = Option<level>;
+export type DateOrderOptions = Option<"asc" | "desc">;
 
 // ================================
 // ========= TYPES ================
@@ -62,10 +55,7 @@ const getTypeFromParams = (params: URLParams): TypeOptions => {
   };
 };
 
-const getSubjectsFromParams = (
-  params: URLParams,
-  level: level
-): SubjectsOptions => {
+const getSubjectsFromParams = (params: URLParams, level: level, existedSubjects: subject[]): SubjectsOptions => {
   const { subjects } = params;
   if (subjects) {
     const acc: Option<subject> = {} as Option<subject>;
@@ -77,16 +67,17 @@ const getSubjectsFromParams = (
   // return all subjects as false
   const newSubjects: Option<subject> = {} as Option<subject>;
   getSubjects(level).forEach((subject) => {
-    newSubjects[subject] = false;
+    if (existedSubjects.includes(subject)) {
+      newSubjects[subject] = false;
+    }
+    // newSubjects[subject] = false;
   });
   return newSubjects;
 };
 
-const getLevelsFromParams = (
-  params: URLParams,
-  subject: subject
-): LevelsOptions => {
+const getLevelsFromParams = (params: URLParams, subject: subject, existedLevels: level[]): LevelsOptions => {
   const { levels } = params;
+  console.log(existedLevels, getLevels(subject));
   if (levels) {
     const acc: Option<level> = {} as Option<level>;
     getLevels(subject).forEach((level) => {
@@ -94,11 +85,13 @@ const getLevelsFromParams = (
     });
     return acc;
   }
-  // return all levels as false
   const newLevels: Option<level> = {} as Option<level>;
   getLevels(subject).forEach((level) => {
-    newLevels[level] = false;
+    if (existedLevels.includes(level)) {
+      newLevels[level] = false;
+    }
   });
+
   return newLevels;
 };
 
@@ -143,9 +136,7 @@ const resetType = (setQuestionTypes: Dispatch<SetStateAction<TypeOptions>>) => {
   });
 };
 
-const resetSubjects = (
-  setSubjects: Dispatch<SetStateAction<Option<subject>>>
-) => {
+const resetSubjects = (setSubjects: Dispatch<SetStateAction<Option<subject>>>) => {
   const newSubjects: Option<subject> = {} as Option<subject>;
   subjectOptions.forEach((subject) => {
     newSubjects[subject.label] = false;
@@ -195,6 +186,155 @@ const resetAll: ResetAll = (
     endDate: undefined,
   });
 };
+
+export class FilterService {
+  params: URLParams;
+  existedLevels: level[];
+  existedSubjects: subject[];
+  constructor(params: URLParams, existedLevels: level[], existedSubjects: subject[]) {
+    this.params = params;
+    this.existedLevels = existedLevels;
+    this.existedSubjects = existedSubjects;
+  }
+
+  getTablesIntersection(table1: string[], table2: string[]) {
+    return table1.filter((value) => table2.includes(value));
+  }
+
+  getSubjectsFromParams = (level: level): SubjectsOptions => {
+    const { subjects } = this.params;
+    if (subjects) {
+      const acc: Option<subject> = {} as Option<subject>;
+      getSubjects(level).forEach((subject) => {
+        acc[subject] = subjects.includes(subject);
+      });
+      return acc;
+    }
+    const newSubjects: Option<subject> = {} as Option<subject>;
+    this.getTablesIntersection(this.existedSubjects, getSubjects(level)).forEach((subject) => {
+      newSubjects[subject as subject] = false;
+    });
+    return newSubjects;
+  };
+
+  getLevelsFromParams = (subject: subject): LevelsOptions => {
+    const { levels } = this.params;
+    if (levels) {
+      const acc: Option<level> = {} as Option<level>;
+      getLevels(subject).forEach((level) => {
+        acc[level] = levels.includes(level);
+      });
+      return acc;
+    }
+    const newLevels: Option<level> = {} as Option<level>;
+    this.getTablesIntersection(this.existedLevels, getLevels(subject)).forEach((level) => {
+      newLevels[level as level] = false;
+    });
+    return newLevels;
+  };
+
+  getTypeFromParams() {
+    const { type } = this.params;
+    if (type) {
+      return {
+        "Avec réponse": type === "answered",
+        "Sans réponse": type === "unanswered",
+      };
+    }
+    return {
+      "Avec réponse": false,
+      "Sans réponse": false,
+    };
+  }
+
+  getDateOrderFromParams() {
+    const { dateOrder } = this.params;
+    if (dateOrder) {
+      return {
+        asc: dateOrder === "asc",
+        desc: dateOrder === "desc",
+      };
+    }
+    return {
+      asc: false,
+      desc: false,
+    };
+  }
+
+  getStartDateFromParams() {
+    const { startDate } = this.params;
+    if (startDate) {
+      return new window.Date(startDate);
+    }
+    return null;
+  }
+
+  getEndDateFromParams() {
+    const { endDate } = this.params;
+    if (endDate) {
+      return new window.Date(endDate);
+    }
+    return null;
+  }
+
+  resetType = (setQuestionTypes: Dispatch<SetStateAction<TypeOptions>>) => {
+    setQuestionTypes({
+      "Avec réponse": false,
+      "Sans réponse": false,
+    });
+  };
+
+  resetSubjects = (setSubjects: Dispatch<SetStateAction<Option<subject>>>) => {
+    const newSubjects: Option<subject> = {} as Option<subject>;
+    subjectOptions.forEach((subject) => {
+      newSubjects[subject.label] = false;
+    });
+    setSubjects(newSubjects);
+  };
+
+  resetLevels = (setLevels: Dispatch<SetStateAction<Option<level>>>, subject: subject) => {
+    const newLevels: Option<level> = {} as Option<level>;
+    this.getTablesIntersection(this.existedLevels, getLevels(subject)).forEach((level) => {
+      newLevels[level as level] = false;
+    });
+    setLevels(newLevels);
+  };
+
+  resetDateOrder = (setDateOrder: SetDateOrder) => {
+    setDateOrder({
+      asc: false,
+      desc: false,
+    });
+  };
+
+  resetDate = (setStartDate: SetStartDate, setEndDate: SetEndDate) => {
+    setStartDate(null);
+    setEndDate(null);
+  };
+
+  resetAll: ResetAll = (
+    setQuestionTypes,
+    setSubjects,
+    setLevels,
+    setDateOrder,
+    setStartDate,
+    setEndDate,
+    setParams
+  ) => {
+    resetType(setQuestionTypes);
+    resetSubjects(setSubjects);
+    resetLevels(setLevels);
+    resetDateOrder(setDateOrder);
+    resetDate(setStartDate, setEndDate);
+    setParams({
+      type: undefined,
+      subjects: undefined,
+      dateOrder: undefined,
+      startDate: undefined,
+      endDate: undefined,
+    });
+  };
+}
 
 // ==================================
 // ============ EXPORTS ===========

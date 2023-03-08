@@ -1,12 +1,7 @@
 import React from "react";
-import { useQuery } from "react-query";
 import Button from "@atoms/Button";
-import usePayload from "@hooks/usePayload";
-import { api } from "@api/index";
 
 const Home = () => {
-  const payload = usePayload();
-  useQuery([payload.role, payload.id], () => api.get("/profile/" + payload.id));
   return (
     <div className="">
       <div className=" mx-8 mt-32 flex flex-col items-center justify-center gap-6 md:flex-row md:items-stretch">

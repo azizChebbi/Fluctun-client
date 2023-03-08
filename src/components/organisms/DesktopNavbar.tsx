@@ -18,6 +18,7 @@ const DesktopNavbar = () => {
     onError: () => {
       notifyError("Un erreur s'est produite");
     },
+    refetchOnWindowFocus: false,
   });
   return (
     <nav className=" col-span-2 flex items-center justify-between border-b border-[#AFAFAF] px-24">
@@ -31,7 +32,7 @@ const DesktopNavbar = () => {
             <p>
               {role == "student"
                 ? "Poser une question"
-                : "Réponder aux questions"}
+                : "Répondre aux questions"}
             </p>
           </Button>
         </Link>

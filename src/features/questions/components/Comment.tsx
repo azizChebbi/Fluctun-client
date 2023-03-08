@@ -6,6 +6,7 @@ import DateFomratted from "@atoms/DateFomratted";
 import { queryClient } from "@context/index";
 import { notifyError } from "@utils/notify";
 import { api } from "@api/index";
+import profilePicture from "@images/profile.svg";
 import { Comment as CommentType } from "../types";
 
 interface IProps {
@@ -41,7 +42,8 @@ const Comment: FC<IProps> = ({ comment }) => {
             payload.role === "teacher"
               ? ""
               : comment.student?.photo ||
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQmatBzkPfadV3gbygHddFgNYbNzBbINaWqFamNP3zOCJyY-EZzJJZW3SjSpeYSGfSlsgI&usqp=CAU"
+                comment.teacher?.photo ||
+                profilePicture
           }
         />
         <p className=" mt-[2px] flex-1 text-sm font-light text-blue md:text-lg">
