@@ -75,11 +75,8 @@ const getSubjectsFromParams = (params: URLParams, level: level, existedSubjects:
   }
   // return all subjects as false
   const newSubjects: Option<subject> = {} as Option<subject>;
-  getSubjects(level).forEach((subject) => {
-    if (existedSubjects.includes(subject)) {
-      newSubjects[subject] = false;
-    }
-    // newSubjects[subject] = false;
+  getTablesIntersection(getSubjects(level), existedSubjects).forEach((subject) => {
+    newSubjects[subject as subject] = false;
   });
   return newSubjects;
 };
@@ -112,10 +109,8 @@ const getLevelsFromParams = (params: URLParams, subject: subject, existedLevels:
     return acc;
   }
   const newLevels: Option<level> = {} as Option<level>;
-  getLevels(subject).forEach((level) => {
-    if (existedLevels.includes(level)) {
-      newLevels[level] = false;
-    }
+  getTablesIntersection(getLevels(subject), existedLevels).forEach((level) => {
+    newLevels[level as level] = false;
   });
 
   return newLevels;
@@ -185,36 +180,26 @@ const resetSubjects = (
   existedSubjects: subject[]
 ) => {
   const newSubjects: Option<subject> = {} as Option<subject>;
-  // subjectOptions.forEach((subject) => {
-  //   newSubjects[subject.label] = false;
-  // });
-  getSubjects(level).forEach((subject) => {
-    if (existedSubjects.includes(subject)) {
-      newSubjects[subject] = false;
-    }
+  getTablesIntersection(getSubjects(level), existedSubjects).forEach((subject) => {
+    newSubjects[subject as subject] = false;
   });
-
   setSubjects(newSubjects);
 };
 
 const resetLevels = (setLevels: Dispatch<SetStateAction<Option<level>>>, subject: subject, existedLevels: level[]) => {
   const newLevels: Option<level> = {} as Option<level>;
-  // levelOptions.forEach((level) => {
-  //   newLevels[level.label] = false;
-  // });
-  getLevels(subject).forEach((level) => {
-    if (existedLevels.includes(level)) {
-      newLevels[level] = false;
-    }
+  getTablesIntersection(getLevels(subject), existedLevels).forEach((level) => {
+    newLevels[level as level] = false;
   });
   setLevels(newLevels);
 };
 
 const resetDateOrder = (setDateOrder: SetDateOrder) => {
-  setDateOrder({
+  console.log("called");
+  setDateOrder(() => ({
     asc: false,
     desc: false,
-  });
+  }));
 };
 
 const resetDate = (setStartDate: SetStartDate, setEndDate: SetEndDate) => {

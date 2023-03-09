@@ -179,8 +179,8 @@ const Filter: FC<IProps> = ({ setQuestions, setIsLoading }) => {
       setParams,
       queryResults[2].data?.data,
       queryResults[1].data?.data,
-      queryResults[0].data?.data.level,
-      queryResults[0].data?.data.subject
+      queryResults[0].data?.data.subject,
+      queryResults[0].data?.data.level
     );
     handleFilter();
   };
