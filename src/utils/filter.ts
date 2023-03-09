@@ -29,7 +29,11 @@ type ResetAll = (
   setDateOrder: SetDateOrder,
   setStartDate: SetStartDate,
   setEndDate: SetEndDate,
-  setParams: SetParams
+  setParams: SetParams,
+  existedLevels: level[],
+  existedSubjects: subject[],
+  subject: subject,
+  level: level
 ) => void;
 type resetType = (setQuestionTypes: SetQuestionTypes) => void;
 type resetSubjects = (setSubjects: SetSubjects) => void;
@@ -40,6 +44,10 @@ type resetDate = (setStartDate: SetStartDate, setEndDate: SetEndDate) => void;
 // ==================================
 // ============ GET FUNCTIONS ===========
 // ==================================
+
+const getTablesIntersection = (table1: string[], table2: string[]) => {
+  return table1.filter((value) => table2.includes(value));
+};
 
 const getTypeFromParams = (params: URLParams): TypeOptions => {
   const { type } = params;
@@ -56,11 +64,12 @@ const getTypeFromParams = (params: URLParams): TypeOptions => {
 };
 
 const getSubjectsFromParams = (params: URLParams, level: level, existedSubjects: subject[]): SubjectsOptions => {
+  console.log(params, level, existedSubjects);
   const { subjects } = params;
   if (subjects) {
     const acc: Option<subject> = {} as Option<subject>;
-    getSubjects(level).forEach((subject) => {
-      acc[subject] = subjects.includes(subject);
+    getTablesIntersection(getSubjects(level), existedSubjects).forEach((subject) => {
+      acc[subject as subject] = subjects.includes(subject as subject);
     });
     return acc;
   }
@@ -75,13 +84,30 @@ const getSubjectsFromParams = (params: URLParams, level: level, existedSubjects:
   return newSubjects;
 };
 
+const getSFP = (params: URLParams): SubjectsOptions => {
+  const { subjects } = params;
+  if (subjects) {
+    const acc: Option<subject> = {} as Option<subject>;
+    subjectOptions.forEach((subject) => {
+      acc[subject.label] = subjects.includes(subject.label);
+    });
+    return acc;
+  }
+  // return all subjects as false
+  const newSubjects: Option<subject> = {} as Option<subject>;
+  subjectOptions.forEach((subject) => {
+    newSubjects[subject.label] = false;
+  });
+
+  return newSubjects;
+};
+
 const getLevelsFromParams = (params: URLParams, subject: subject, existedLevels: level[]): LevelsOptions => {
   const { levels } = params;
-  console.log(existedLevels, getLevels(subject));
   if (levels) {
     const acc: Option<level> = {} as Option<level>;
-    getLevels(subject).forEach((level) => {
-      acc[level] = levels.includes(level);
+    getTablesIntersection(getLevels(subject), existedLevels).forEach((level) => {
+      acc[level as level] = levels.includes(level as level);
     });
     return acc;
   }
@@ -90,6 +116,23 @@ const getLevelsFromParams = (params: URLParams, subject: subject, existedLevels:
     if (existedLevels.includes(level)) {
       newLevels[level] = false;
     }
+  });
+
+  return newLevels;
+};
+
+const getLFP = (params: URLParams): LevelsOptions => {
+  const { levels } = params;
+  if (levels) {
+    const acc: Option<level> = {} as Option<level>;
+    levelOptions.forEach((level) => {
+      acc[level.label] = levels.includes(level.label);
+    });
+    return acc;
+  }
+  const newLevels: Option<level> = {} as Option<level>;
+  levelOptions.forEach((level) => {
+    newLevels[level.label] = false;
   });
 
   return newLevels;
@@ -136,18 +179,33 @@ const resetType = (setQuestionTypes: Dispatch<SetStateAction<TypeOptions>>) => {
   });
 };
 
-const resetSubjects = (setSubjects: Dispatch<SetStateAction<Option<subject>>>) => {
+const resetSubjects = (
+  setSubjects: Dispatch<SetStateAction<Option<subject>>>,
+  level: level,
+  existedSubjects: subject[]
+) => {
   const newSubjects: Option<subject> = {} as Option<subject>;
-  subjectOptions.forEach((subject) => {
-    newSubjects[subject.label] = false;
+  // subjectOptions.forEach((subject) => {
+  //   newSubjects[subject.label] = false;
+  // });
+  getSubjects(level).forEach((subject) => {
+    if (existedSubjects.includes(subject)) {
+      newSubjects[subject] = false;
+    }
   });
+
   setSubjects(newSubjects);
 };
 
-const resetLevels = (setLevels: Dispatch<SetStateAction<Option<level>>>) => {
+const resetLevels = (setLevels: Dispatch<SetStateAction<Option<level>>>, subject: subject, existedLevels: level[]) => {
   const newLevels: Option<level> = {} as Option<level>;
-  levelOptions.forEach((level) => {
-    newLevels[level.label] = false;
+  // levelOptions.forEach((level) => {
+  //   newLevels[level.label] = false;
+  // });
+  getLevels(subject).forEach((level) => {
+    if (existedLevels.includes(level)) {
+      newLevels[level] = false;
+    }
   });
   setLevels(newLevels);
 };
@@ -171,11 +229,15 @@ const resetAll: ResetAll = (
   setDateOrder,
   setStartDate,
   setEndDate,
-  setParams
+  setParams,
+  existedLevels,
+  existedSubjects,
+  subject,
+  level
 ) => {
   resetType(setQuestionTypes);
-  resetSubjects(setSubjects);
-  resetLevels(setLevels);
+  resetSubjects(setSubjects, level, existedSubjects);
+  resetLevels(setLevels, subject, existedLevels);
   resetDateOrder(setDateOrder);
   resetDate(setStartDate, setEndDate);
   setParams({
@@ -186,155 +248,6 @@ const resetAll: ResetAll = (
     endDate: undefined,
   });
 };
-
-export class FilterService {
-  params: URLParams;
-  existedLevels: level[];
-  existedSubjects: subject[];
-  constructor(params: URLParams, existedLevels: level[], existedSubjects: subject[]) {
-    this.params = params;
-    this.existedLevels = existedLevels;
-    this.existedSubjects = existedSubjects;
-  }
-
-  getTablesIntersection(table1: string[], table2: string[]) {
-    return table1.filter((value) => table2.includes(value));
-  }
-
-  getSubjectsFromParams = (level: level): SubjectsOptions => {
-    const { subjects } = this.params;
-    if (subjects) {
-      const acc: Option<subject> = {} as Option<subject>;
-      getSubjects(level).forEach((subject) => {
-        acc[subject] = subjects.includes(subject);
-      });
-      return acc;
-    }
-    const newSubjects: Option<subject> = {} as Option<subject>;
-    this.getTablesIntersection(this.existedSubjects, getSubjects(level)).forEach((subject) => {
-      newSubjects[subject as subject] = false;
-    });
-    return newSubjects;
-  };
-
-  getLevelsFromParams = (subject: subject): LevelsOptions => {
-    const { levels } = this.params;
-    if (levels) {
-      const acc: Option<level> = {} as Option<level>;
-      getLevels(subject).forEach((level) => {
-        acc[level] = levels.includes(level);
-      });
-      return acc;
-    }
-    const newLevels: Option<level> = {} as Option<level>;
-    this.getTablesIntersection(this.existedLevels, getLevels(subject)).forEach((level) => {
-      newLevels[level as level] = false;
-    });
-    return newLevels;
-  };
-
-  getTypeFromParams() {
-    const { type } = this.params;
-    if (type) {
-      return {
-        "Avec réponse": type === "answered",
-        "Sans réponse": type === "unanswered",
-      };
-    }
-    return {
-      "Avec réponse": false,
-      "Sans réponse": false,
-    };
-  }
-
-  getDateOrderFromParams() {
-    const { dateOrder } = this.params;
-    if (dateOrder) {
-      return {
-        asc: dateOrder === "asc",
-        desc: dateOrder === "desc",
-      };
-    }
-    return {
-      asc: false,
-      desc: false,
-    };
-  }
-
-  getStartDateFromParams() {
-    const { startDate } = this.params;
-    if (startDate) {
-      return new window.Date(startDate);
-    }
-    return null;
-  }
-
-  getEndDateFromParams() {
-    const { endDate } = this.params;
-    if (endDate) {
-      return new window.Date(endDate);
-    }
-    return null;
-  }
-
-  resetType = (setQuestionTypes: Dispatch<SetStateAction<TypeOptions>>) => {
-    setQuestionTypes({
-      "Avec réponse": false,
-      "Sans réponse": false,
-    });
-  };
-
-  resetSubjects = (setSubjects: Dispatch<SetStateAction<Option<subject>>>) => {
-    const newSubjects: Option<subject> = {} as Option<subject>;
-    subjectOptions.forEach((subject) => {
-      newSubjects[subject.label] = false;
-    });
-    setSubjects(newSubjects);
-  };
-
-  resetLevels = (setLevels: Dispatch<SetStateAction<Option<level>>>, subject: subject) => {
-    const newLevels: Option<level> = {} as Option<level>;
-    this.getTablesIntersection(this.existedLevels, getLevels(subject)).forEach((level) => {
-      newLevels[level as level] = false;
-    });
-    setLevels(newLevels);
-  };
-
-  resetDateOrder = (setDateOrder: SetDateOrder) => {
-    setDateOrder({
-      asc: false,
-      desc: false,
-    });
-  };
-
-  resetDate = (setStartDate: SetStartDate, setEndDate: SetEndDate) => {
-    setStartDate(null);
-    setEndDate(null);
-  };
-
-  resetAll: ResetAll = (
-    setQuestionTypes,
-    setSubjects,
-    setLevels,
-    setDateOrder,
-    setStartDate,
-    setEndDate,
-    setParams
-  ) => {
-    resetType(setQuestionTypes);
-    resetSubjects(setSubjects);
-    resetLevels(setLevels);
-    resetDateOrder(setDateOrder);
-    resetDate(setStartDate, setEndDate);
-    setParams({
-      type: undefined,
-      subjects: undefined,
-      dateOrder: undefined,
-      startDate: undefined,
-      endDate: undefined,
-    });
-  };
-}
 
 // ==================================
 // ============ EXPORTS ===========
@@ -347,5 +260,7 @@ export {
   getStartDateFromParams,
   getEndDateFromParams,
   getLevelsFromParams,
+  getSFP,
+  getLFP,
   resetAll,
 };

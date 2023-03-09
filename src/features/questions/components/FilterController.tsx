@@ -1,10 +1,4 @@
-import React, {
-  Dispatch,
-  FC,
-  SetStateAction,
-  useEffect,
-  useState,
-} from "react";
+import React, { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import { useMutation, useQueries } from "react-query";
 import useUrlState from "@ahooksjs/use-url-state";
 import { api } from "@api/index";
@@ -14,10 +8,12 @@ import {
   getEndDateFromParams,
   getStartDateFromParams,
   getTypeFromParams,
-  getSubjectsFromParams,
-  getLevelsFromParams,
   resetAll,
   Option,
+  getSubjectsFromParams,
+  getLevelsFromParams,
+  getSFP,
+  getLFP,
 } from "@utils/filter";
 import { subject, level } from "@utils/options";
 import usePayload from "@hooks/usePayload";
@@ -35,6 +31,7 @@ const Filter: FC<IProps> = ({ setQuestions, setIsLoading }) => {
   // =================================================
   // =================== PRE SETUP ===================
   // =================================================
+
   const payload = usePayload();
 
   const queryResults = useQueries([
@@ -53,25 +50,15 @@ const Filter: FC<IProps> = ({ setQuestions, setIsLoading }) => {
   ]);
 
   useEffect(() => {
-    if (
-      queryResults[0].isSuccess &&
-      (queryResults[1].isSuccess || queryResults[2].isSuccess)
-    ) {
-      const user = queryResults[0].data?.data;
-      const existedSubjects = queryResults[1].data?.data;
-      const existedLevels = queryResults[2].data?.data;
-      setSubjects(() =>
-        getSubjectsFromParams(params, user.level || "", existedSubjects || [])
-      );
-      setLevels(() =>
-        getLevelsFromParams(params, user.subject || "", existedLevels || [])
-      );
+    const user = queryResults[0].data?.data;
+    const existedSubjects = queryResults[1].data?.data;
+    const existedLevels = queryResults[2].data?.data;
+    if (user && (existedLevels || existedSubjects)) {
+      setSubjects(() => getSubjectsFromParams(params, user.level || "", existedSubjects || []));
+      setLevels(() => getLevelsFromParams(params, user.subject || "", existedLevels || []));
     }
-  }, [
-    queryResults[0].isSuccess,
-    queryResults[1].isSuccess,
-    queryResults[2].isSuccess,
-  ]);
+    // }
+  }, [queryResults[0].isSuccess, queryResults[1].isSuccess, queryResults[2].isSuccess]);
 
   // =================================================
   // =================== STATE =======================
@@ -87,20 +74,12 @@ const Filter: FC<IProps> = ({ setQuestions, setIsLoading }) => {
       },
     }
   );
-  const [questionTypes, setQuestionTypes] = React.useState(() =>
-    getTypeFromParams(params)
-  );
-  const [subjects, setSubjects] = React.useState<Option<subject>>({});
-  const [levels, setLevels] = React.useState<Option<level>>({});
-  const [startDate, setStartDate] = useState<Date | null>(() =>
-    getStartDateFromParams(params)
-  );
-  const [endDate, setEndDate] = useState<Date | null>(() =>
-    getEndDateFromParams(params)
-  );
-  const [dateOrder, setDateOrder] = React.useState(() =>
-    getDateOrderFromParams(params)
-  );
+  const [questionTypes, setQuestionTypes] = React.useState(() => getTypeFromParams(params));
+  const [subjects, setSubjects] = React.useState<Option<subject>>(() => getSFP(params));
+  const [levels, setLevels] = React.useState<Option<level>>(() => getLFP(params));
+  const [startDate, setStartDate] = useState<Date | null>(() => getStartDateFromParams(params));
+  const [endDate, setEndDate] = useState<Date | null>(() => getEndDateFromParams(params));
+  const [dateOrder, setDateOrder] = React.useState(() => getDateOrderFromParams(params));
 
   // =================================================
   // =================== EFFECT ======================
@@ -112,7 +91,6 @@ const Filter: FC<IProps> = ({ setQuestions, setIsLoading }) => {
 
   useEffect(() => {
     const params: URLParams = {};
-
     // ================= DATE ORDER =================
     if (questionTypes["Avec réponse"]) {
       params.type = "answered";
@@ -121,7 +99,6 @@ const Filter: FC<IProps> = ({ setQuestions, setIsLoading }) => {
     } else {
       params.type = undefined;
     }
-
     // ================= SUBJECTS =================
     const subjectsArray: subject[] = [];
     Object.entries(subjects).forEach(([key, value]) => {
@@ -129,13 +106,11 @@ const Filter: FC<IProps> = ({ setQuestions, setIsLoading }) => {
         subjectsArray.push(key as subject);
       }
     });
-
     if (subjectsArray.length > 0) {
       params.subjects = subjectsArray;
     } else {
       params.subjects = undefined;
     }
-
     // ================= LEVELS =================
     const levelsArray: level[] = [];
     Object.entries(levels).forEach(([key, value]) => {
@@ -143,13 +118,11 @@ const Filter: FC<IProps> = ({ setQuestions, setIsLoading }) => {
         levelsArray.push(key as level);
       }
     });
-
     if (levelsArray.length > 0) {
       params.levels = levelsArray;
     } else {
       params.levels = undefined;
     }
-
     // ================= DATE ORDER =================
     if (dateOrder["asc"]) {
       params.dateOrder = "asc";
@@ -158,7 +131,6 @@ const Filter: FC<IProps> = ({ setQuestions, setIsLoading }) => {
     } else {
       params.dateOrder = undefined;
     }
-
     // ================= DATE =================
     if (startDate) {
       params.startDate = startDate.toString();
@@ -178,18 +150,15 @@ const Filter: FC<IProps> = ({ setQuestions, setIsLoading }) => {
   // =================== MUTATION ====================
   // =================================================
 
-  const filterMuation = useMutation(
-    () => api.get("/questions", { params: params }),
-    {
-      onSuccess: (data) => {
-        setQuestions(data.data);
-        setIsLoading(false);
-      },
-      onError: () => {
-        notifyError("Une erreur est survenue");
-      },
-    }
-  );
+  const filterMuation = useMutation(() => api.get("/questions", { params: params }), {
+    onSuccess: (data) => {
+      setQuestions(data.data);
+      setIsLoading(false);
+    },
+    onError: () => {
+      notifyError("Une erreur est survenue");
+    },
+  });
 
   // =================================================
   // =================== HANDLERS ====================
@@ -207,7 +176,11 @@ const Filter: FC<IProps> = ({ setQuestions, setIsLoading }) => {
       setDateOrder,
       setStartDate,
       setEndDate,
-      setParams
+      setParams,
+      queryResults[2].data?.data,
+      queryResults[1].data?.data,
+      queryResults[0].data?.data.level,
+      queryResults[0].data?.data.subject
     );
     handleFilter();
   };
