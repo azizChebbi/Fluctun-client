@@ -10,7 +10,7 @@ import SendEmail from "@pages/SendEmail";
 import ResetSuccess from "@pages/ResetSuccess";
 import Ask from "@pages/Ask";
 import Questions from "@pages/Questions";
-import Courses from "@pages/Courses";
+import Courses from "@pages/Documents";
 import Details from "@pages/Details";
 import Profile from "@pages/Profile";
 import EditAnswer from "@pages/EditAnswer";

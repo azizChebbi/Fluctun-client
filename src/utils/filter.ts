@@ -45,7 +45,7 @@ type resetDate = (setStartDate: SetStartDate, setEndDate: SetEndDate) => void;
 // ============ GET FUNCTIONS ===========
 // ==================================
 
-const getTablesIntersection = (table1: string[], table2: string[]) => {
+export const getTablesIntersection = (table1: string[], table2: string[]) => {
   return table1.filter((value) => table2.includes(value));
 };
 

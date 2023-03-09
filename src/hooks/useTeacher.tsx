@@ -6,11 +6,11 @@ import usePayload from "./usePayload";
 
 const useTeacher = () => {
   const { role, id } = usePayload();
-  const [teacher, setteacher] = useState<Teacher | null>();
-  if (role == "teacher") return null;
+  const [teacher, setTeacher] = useState<Teacher | null>();
+  if (role == "student") return null;
   useQuery(["teacher", id], () => api.get("/profile/" + id), {
     onSuccess: (data) => {
-      setteacher(data.data);
+      setTeacher(data.data);
     },
   });
   return teacher;

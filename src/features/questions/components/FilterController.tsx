@@ -33,19 +33,23 @@ const Filter: FC<IProps> = ({ setQuestions, setIsLoading }) => {
   // =================================================
 
   const payload = usePayload();
-
   const queryResults = useQueries([
     {
       queryKey: [payload.role, payload.id],
       queryFn: () => api.get("/profile/" + payload.id),
+      refetchOnWindowFocus: false,
     },
     {
       queryKey: "subjects",
       queryFn: () => api.get("/documents/subjects"),
+      retry: false,
+      refetchOnWindowFocus: false,
     },
     {
       queryKey: "levels",
       queryFn: () => api.get("/documents/levels"),
+      retry: false,
+      refetchOnWindowFocus: false,
     },
   ]);
 
@@ -57,7 +61,6 @@ const Filter: FC<IProps> = ({ setQuestions, setIsLoading }) => {
       setSubjects(() => getSubjectsFromParams(params, user.level || "", existedSubjects || []));
       setLevels(() => getLevelsFromParams(params, user.subject || "", existedLevels || []));
     }
-    // }
   }, [queryResults[0].isSuccess, queryResults[1].isSuccess, queryResults[2].isSuccess]);
 
   // =================================================
@@ -182,7 +185,6 @@ const Filter: FC<IProps> = ({ setQuestions, setIsLoading }) => {
       queryResults[0].data?.data.subject,
       queryResults[0].data?.data.level
     );
-    handleFilter();
   };
 
   return (
