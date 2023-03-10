@@ -5,10 +5,7 @@ export const loginSchema = yup
   .object({
     email: yup
       .string()
-      .matches(
-        /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
-        "Email doit être valide"
-      )
+      .matches(/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, "Email doit être valide")
       .email("Email doit être valide")
       .required(),
     password: yup.string().min(8).required("Please Enter your password"),
@@ -19,10 +16,7 @@ export const forgotPasswordSchema = yup
   .object({
     email: yup
       .string()
-      .matches(
-        /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
-        "Email doit être valide"
-      )
+      .matches(/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, "Email doit être valide")
       .email("Email doit être valide")
       .required(),
   })
@@ -30,9 +24,7 @@ export const forgotPasswordSchema = yup
 
 export const resetPasswordsSchema = yup.object({
   password: yup.string().min(8).required("Password is required"),
-  passwordConfirmation: yup
-    .string()
-    .oneOf([yup.ref("password")], "Passwords must match"),
+  passwordConfirmation: yup.string().oneOf([yup.ref("password")], "Passwords must match"),
 });
 
 export const askQuestionSchema = yup.object({
@@ -52,4 +44,33 @@ export const askQuestionSchema = yup.object({
 
 export const addCommentSchema = yup.object({
   comment: yup.string().required(),
+});
+
+export const addDocumentShema = yup.object({
+  title: yup
+    .string()
+    .min(3, " Titre doit être plus que 3 caractères")
+    .max(40, "Titre doit être moins que 40 caractères")
+    .required("Titre est obligatoire"),
+  file: yup.mixed().test("required", " Vous devez selectionner une fichier", (file: any) => {
+    // return file && file.size <-- u can use this if you don't want to allow empty files to be uploaded;
+    if (file?.length) return true;
+    return false;
+  }),
+  // .test("fileSize", "Fichier doit être moins que 20MB", (value: any) => value && value.size <= 20000000),
+  // .test(
+  //   "fileFormat",
+  //   "Fichier doit être PDF ou DOCX",
+  //   (value: any) => value && (value.type === "application/pdf" || value.type === "application/docx")
+  // ),
+  levels: yup
+    .array()
+    .min(1, "Vous devez selectionner au moins un niveau")
+    .of(
+      yup.object().shape({
+        label: yup.string().required(),
+        value: yup.string().required(),
+      })
+    )
+    .required("Vous devez selectionner au moins un niveau"),
 });
