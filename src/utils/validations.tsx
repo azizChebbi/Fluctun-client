@@ -52,16 +52,21 @@ export const addDocumentShema = yup.object({
     .min(3, " Titre doit être plus que 3 caractères")
     .max(40, "Titre doit être moins que 40 caractères")
     .required("Titre est obligatoire"),
-  file: yup.mixed().test("required", " Vous devez selectionner une fichier", (file: any) => {
-    // return file && file.size <-- u can use this if you don't want to allow empty files to be uploaded;
-    if (file?.length) return true;
-    return false;
-  }),
-  // .test("fileSize", "Fichier doit être moins que 20MB", (value: any) => value && value.size <= 20000000),
+  file: yup
+    .mixed()
+    .test("required", " Vous devez selectionner une fichier", (files: any) => {
+      // return file && file.size <-- u can use this if you don't want to allow empty files to be uploaded;
+      if (files?.length) return true;
+      return false;
+    })
+    .test("fileSize", "Fichier doit être moins que 30MB", (files: any) => {
+      console.log(" files", files);
+      return files?.length && files[0].size <= 30000000;
+    }),
   // .test(
   //   "fileFormat",
   //   "Fichier doit être PDF ou DOCX",
-  //   (value: any) => value && (value.type === "application/pdf" || value.type === "application/docx")
+  //   (files: any) => files?.length && (files[0].type === "application/pdf" || files[0].type === "application/docx")
   // ),
   levels: yup
     .array()

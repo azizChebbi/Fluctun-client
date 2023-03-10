@@ -67,13 +67,15 @@ const AddDocument: FC<IProps> = ({ levels }) => {
 
   const onSubmit = (data: IFormInputs) => {
     if (data.file[0]) {
-      console.log(data, data?.file[0]);
+      const { size, type } = data.file[0];
       const levels = data.levels.map((level) => level.value);
       const formData = new FormData();
       formData.append("title", data.title);
       formData.append("file", data.file[0]);
       formData.append("levels", levels.join(","));
       formData.append("teacherId", payload?.id);
+      formData.append("size", size);
+      formData.append("type", type);
       addDocumentMutation.mutate(formData);
     }
   };
@@ -140,7 +142,11 @@ const AddDocument: FC<IProps> = ({ levels }) => {
             <Button outlined className=" rounded py-3 px-7 text-sm md:text-base" onClick={handleClose} type="button">
               Annuler
             </Button>
-            <Button type="submit" className=" rounded py-3 px-7 text-sm md:text-base">
+            <Button
+              isLoading={addDocumentMutation.isLoading}
+              type="submit"
+              className=" rounded py-3 px-7 text-sm md:text-base"
+            >
               Ajouter
             </Button>
           </div>
