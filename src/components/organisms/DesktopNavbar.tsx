@@ -6,19 +6,13 @@ import logo from "@icons/logo.svg";
 import Button from "@atoms/Button";
 import usePayload from "@hooks/usePayload";
 import { api } from "@api/index";
-import { notifyError } from "@utils/notify";
 import profilePicture from "@images/profile.svg";
 
 const DesktopNavbar = () => {
   const { id, role } = usePayload();
   const user = useQuery([role, id], () => api.get("/profile/" + id), {
-    onSuccess: (data) => {
-      console.log(data);
-    },
-    onError: () => {
-      notifyError("Un erreur s'est produite");
-    },
     refetchOnWindowFocus: false,
+    retry: false,
   });
   return (
     <nav className=" col-span-2 flex items-center justify-between border-b border-[#AFAFAF] px-24">
@@ -29,19 +23,11 @@ const DesktopNavbar = () => {
         <Link to={role == "student" ? "/ask" : "/questions"}>
           <Button className=" flex items-center justify-center gap-4 rounded px-6 py-4">
             {role == "student" && <span className=" font-medium ">+</span>}
-            <p>
-              {role == "student"
-                ? "Poser une question"
-                : "Répondre aux questions"}
-            </p>
+            <p>{role == "student" ? "Poser une question" : "Répondre aux questions"}</p>
           </Button>
         </Link>
         <Link to="/profile">
-          <Avatar
-            sx={{ width: 40, height: 40 }}
-            alt="E"
-            src={user.data?.data.photo || profilePicture}
-          />
+          <Avatar sx={{ width: 40, height: 40 }} alt="E" src={user.data?.data.photo || profilePicture} />
         </Link>
       </div>
     </nav>

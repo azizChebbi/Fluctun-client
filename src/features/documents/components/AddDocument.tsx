@@ -15,7 +15,8 @@ import Button from "@atoms/Button";
 import ErrorMessage from "@atoms/ErrorMessage";
 import { api } from "@api/index";
 import usePayload from "@hooks/usePayload";
-import { notifyError, notifySuccess } from "@utils/notify";
+import { notifyError } from "@utils/notify";
+import { queryClient } from "@context/index";
 
 const generateLabelValueOptions = (options: level[]) => {
   return options.map((option) => {
@@ -49,6 +50,7 @@ const AddDocument: FC<IProps> = ({ levels }) => {
     register,
     handleSubmit,
     getValues,
+    reset,
     formState: { errors, isValid },
     control,
   } = useForm<IFormInputs>({
@@ -57,8 +59,9 @@ const AddDocument: FC<IProps> = ({ levels }) => {
 
   const addDocumentMutation = useMutation((formData: any) => api.post("/documents/add-document", formData), {
     onSuccess: () => {
-      notifySuccess("Document ajouté avec succès");
-      // handleClose();
+      queryClient.invalidateQueries("teacher-documents");
+      reset();
+      handleClose();
     },
     onError: () => {
       notifyError("Erreur lors de l'ajout du document");

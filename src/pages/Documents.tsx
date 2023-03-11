@@ -6,9 +6,7 @@ import StudentsDocuments from "@features/documents/components/StudentsDocuments"
 const Courses = () => {
   const role = useRole();
   return (
-    <div className=" my-32 mx-4 md:my-0 md:mx-8">
-      {role == "student" ? <StudentsDocuments /> : <TeacherDocuments />}
-    </div>
+    <div className=" my-32 md:my-0 md:mx-8">{role == "student" ? <StudentsDocuments /> : <TeacherDocuments />}</div>
   );
 };
 
