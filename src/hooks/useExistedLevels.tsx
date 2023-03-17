@@ -10,7 +10,6 @@ const useExistedLevels = () => {
   const [levels, setLevels] = useState<level[]>([]);
   useQuery("levels", () => api.get("/documents/levels"), {
     onSuccess: (data) => {
-      console.log(data.data.size);
       setLevels(data.data);
     },
   });

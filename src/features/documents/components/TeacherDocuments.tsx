@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useQuery } from "react-query";
-import useTeacher from "@hooks/useTeacher";
 import { getLevels, level } from "@utils/options";
 import { getTablesIntersection } from "@utils/filter";
 import { DocumentType } from "@utils/documentsType";
+import useTeacher from "@hooks/useTeacher";
+import useExistedLevels from "@hooks/useExistedLevels";
 import CourseAccordian from "./CourseAccordian";
 import AddDocument from "./AddDocument";
 import Document from "./Document";
-import { getExistingLevels, getTeacherDocuments, Document as TypeDocument } from "../api";
+import { getTeacherDocuments, Document as TypeDocument } from "../api";
 
 const getDocumentType = (type: string): DocumentType => {
-  // i want to extract the type from "application/type"
   const typeArray = type.split("/");
   return typeArray[typeArray.length - 1] as DocumentType;
 };
@@ -19,22 +19,21 @@ const TeacherDocuments = () => {
   const [levels, setLevels] = useState<level[]>([]);
   const [documents, setDocuments] = useState<TypeDocument[]>([]);
   const teacher = useTeacher();
-  const levelsQuery = useQuery("levels", getExistingLevels);
+  const existedLevels = useExistedLevels();
 
   useQuery("teacher-documents", getTeacherDocuments, {
     onSuccess: (data) => {
       setDocuments(() => [...data.data]);
     },
-    onError: (error) => console.log(error),
     refetchOnWindowFocus: false,
     retry: false,
   });
   useEffect(() => {
-    const existedStudentsLevels = levelsQuery?.data?.data;
+    const existedStudentsLevels = existedLevels;
     const whichLevelsTeachThisSubject = getLevels(teacher?.subject);
     const intersectionLevels = getTablesIntersection(existedStudentsLevels || [], whichLevelsTeachThisSubject);
     setLevels([...(intersectionLevels as level[])]);
-  }, [teacher, levelsQuery.isSuccess]);
+  }, [teacher, existedLevels]);
   return (
     <div>
       <AddDocument levels={levels} />

@@ -4,9 +4,10 @@ import { getSubjects, subject } from "@utils/options";
 import { getTablesIntersection } from "@utils/filter";
 import { DocumentType } from "@utils/documentsType";
 import useStudent from "@hooks/useStudent";
+import useExistedSubjetcs from "@hooks/useExistedSubjetcs";
 import CourseAccordian from "./CourseAccordian";
 import Document from "./Document";
-import { getStudentDocuments, Document as TypeDocument, getExistingSubjects } from "../api";
+import { getStudentDocuments, Document as TypeDocument } from "../api";
 
 const getDocumentType = (type: string): DocumentType => {
   const typeArray = type.split("/");
@@ -17,23 +18,21 @@ const StudentDocuments = () => {
   const [subjects, setSubjects] = useState<subject[]>([]);
   const [documents, setDocuments] = useState<TypeDocument[]>([]);
   const student = useStudent();
-  const subjectsQuery = useQuery("subjects", getExistingSubjects);
+  const existedSubjects = useExistedSubjetcs();
 
   useQuery("student-documents", getStudentDocuments, {
     onSuccess: (data) => {
       setDocuments(() => [...data.data]);
-      console.log(data);
     },
-    onError: (error) => console.log(error),
     refetchOnWindowFocus: false,
     retry: false,
   });
   useEffect(() => {
-    const existedLevelSubjects = subjectsQuery?.data?.data;
+    const existedLevelSubjects = existedSubjects;
     const whichSubjectsAreTeached = getSubjects(student?.level);
     const intersectionSubjects = getTablesIntersection(existedLevelSubjects || [], whichSubjectsAreTeached);
     setSubjects([...(intersectionSubjects as subject[])]);
-  }, [student, subjectsQuery.isSuccess]);
+  }, [student, existedSubjects]);
   return (
     <div>
       <div className=" my-6 border-[#E2E2E2] md:border md:bg-white md:p-3 md:px-6">

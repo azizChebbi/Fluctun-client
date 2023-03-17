@@ -60,9 +60,11 @@ const Document: FC<IProps> = ({ id, title, url, type, size, teacherName, created
       <div className={"flex w-full items-center justify-between gap-1 px-1"}>
         <div className=" flex items-center gap-2">
           <a
+            href={url}
             download
             className=" text-sm text-[#4182C4] underline underline-offset-1 md:text-lg md:underline-offset-2"
             target="_blank"
+            rel="noreferrer"
           >
             {title}
           </a>

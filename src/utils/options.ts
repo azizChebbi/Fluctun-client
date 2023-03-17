@@ -34,10 +34,7 @@ export type subject =
   | "Economie"
   | "Gestion"
   | "Philosophie"
-  | "Islamique"
-  | "Tic"
-  | "Algorithme et programmation"
-  | "Base de données";
+  | "Islamique";
 
 // define enum classes that take level as key and table of subjects as value
 export type Classes = Record<level, subject[]>; // { [key: level]: subject[] }
@@ -198,8 +195,6 @@ export const classes: Classes = {
     "Allemand",
     "Espagnol",
     "Italien",
-    "Algorithme et programmation",
-    "Tic",
   ],
   "4éme année mathématique": [
     "Mathématique",
@@ -288,9 +283,6 @@ export const classes: Classes = {
     "Allemand",
     "Espagnol",
     "Italien",
-    "Algorithme et programmation",
-    "Tic",
-    "Base de données",
   ],
 };
 
@@ -322,12 +314,6 @@ export const subjectOptions: SubjectOption[] = [
   { value: "Italien", label: "Italien" },
   { value: "Economie", label: "Economie" },
   { value: "Gestion", label: "Gestion" },
-  {
-    value: "Algorithme et programmation",
-    label: "Algorithme et programmation",
-  },
-  { value: "Tic", label: "Tic" },
-  { value: "Base de données", label: "Base de données" },
 ];
 
 export const levelOptions: LevelOption[] = [
@@ -359,7 +345,14 @@ export const getSubjects = (level: level | undefined): subject[] => {
 // define function that takes in a subject and returns an array of levels
 export const getLevels = (subject: subject | undefined): level[] => {
   if (!subject) return [];
-  return Object.keys(classes).filter((level) =>
-    classes[level as level].includes(subject)
-  ) as level[];
+  return Object.keys(classes).filter((level) => classes[level as level].includes(subject)) as level[];
+};
+
+export const generateLabelValueOptions = (options: level[] | subject[]) => {
+  return options.map((option) => {
+    return {
+      label: option,
+      value: option,
+    };
+  });
 };

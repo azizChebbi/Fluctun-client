@@ -1,15 +1,12 @@
 import React from "react";
-import { useQuery } from "react-query";
 import CakeIcon from "@mui/icons-material/Cake";
 import EmailIcon from "@mui/icons-material/Email";
 import PhoneIcon from "@mui/icons-material/Phone";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import editSvg from "@icons/edit.svg";
-import { api } from "@api/index";
-import usePayload from "@hooks/usePayload";
-import { notifyError } from "@utils/notify";
 import DateFomratted from "@atoms/DateFomratted";
 import profilePicture from "@images/profile.svg";
+import useTeacher from "@hooks/useTeacher";
 import MetaData from "./MetaData";
 import ProfileQuestions from "./ProfileQuestions";
 import ProfilePicture from "./ProfilePicture";
@@ -17,21 +14,10 @@ import HeadLine from "./HeadLine";
 import Bio from "./Bio";
 import EditWrapper from "./EditWrapper";
 import EditProfileForm from "./EditProfileForm";
-import { Teacher } from "../types";
 
 const TeacherProfile = () => {
   const [editMode, setEditMode] = React.useState(false);
-  const [teacher, setTeacher] = React.useState<Teacher>();
-  const { id } = usePayload();
-  useQuery(["teacher", id], () => api.get("/profile/" + id), {
-    onSuccess: (data) => {
-      setTeacher(data.data);
-    },
-
-    onError: () => {
-      notifyError("Un erreur s'est produite");
-    },
-  });
+  const teacher = useTeacher();
   return (
     <>
       <div className=" my-8 mx-2 md:m-auto md:w-[80%]">
@@ -60,12 +46,8 @@ const TeacherProfile = () => {
                   <DateFomratted date={teacher?.dateOfBirth} />
                 </MetaData>
               )}
-              {teacher?.address && (
-                <MetaData Icon={LocationOnIcon}>{teacher.address}</MetaData>
-              )}
-              {teacher?.number && (
-                <MetaData Icon={PhoneIcon}>{teacher?.number}</MetaData>
-              )}
+              {teacher?.address && <MetaData Icon={LocationOnIcon}>{teacher.address}</MetaData>}
+              {teacher?.number && <MetaData Icon={PhoneIcon}>{teacher?.number}</MetaData>}
             </div>
           </div>
           <div className=" bordr-[#E2E2E2] mt-4 rounded border bg-white px-6 py-8 md:w-[40%] md:border-none md:py-12">
@@ -80,9 +62,7 @@ const TeacherProfile = () => {
             bio={teacher?.bio}
             address={teacher?.address}
             phone={teacher?.number}
-            birthDate={
-              teacher?.dateOfBirth ? new window.Date(teacher.dateOfBirth) : null
-            }
+            birthDate={teacher?.dateOfBirth ? new window.Date(teacher.dateOfBirth) : null}
           />
         </EditWrapper>
       )}

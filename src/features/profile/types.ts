@@ -4,17 +4,17 @@ import { level, subject } from "@utils/options";
 export type Student = {
   bio: string;
   code: string;
-  createdAt: string;
   dateOfBirth: Date;
   email: string;
   firstName: string;
   id: string;
   lastName: string;
   number: number;
-  address: string;
-  lastUpdatedAt: string;
   level: level;
   photo: string;
+  address: string;
+  createdAt: string;
+  lastUpdatedAt: string;
 };
 
 export type Teacher = {

@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import Button from "@atoms/Button";
 
 const Home = () => {
@@ -14,13 +15,15 @@ const Home = () => {
           </div>
           <div>
             <p className=" h-20 text-blue">
-              Ici vous pouvez deposer vos questions sur les matieres les
-              chapitres ou meme les exercices non compris pour les clarifier .
+              Ici vous pouvez deposer vos questions sur les matieres les chapitres ou meme les exercices non compris
+              pour les clarifier .
             </p>
             <div className=" text-center">
-              <Button color="#EF6965" className=" mt-8 rounded px-4">
-                Poser une question
-              </Button>
+              <Link to="">
+                <Button color="#EF6965" className=" mt-8 rounded px-4">
+                  Poser une question
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
@@ -33,8 +36,7 @@ const Home = () => {
           </div>
           <div>
             <p className=" h-20 text-blue">
-              Vous pouvez ici voir les questions posés et si il ya des reponses
-              et les explications demandés
+              Vous pouvez ici voir les questions posés et si il ya des reponses et les explications demandés
             </p>
             <div className=" text-center">
               <Button className=" mt-8 rounded px-4">Voir les questions</Button>

@@ -8,7 +8,7 @@ import AskSection from "@features/ask/components/AskSection";
 import Input from "@atoms/Input";
 import drop from "@icons/drop.svg";
 import SelectOption from "@atoms/SelectOption";
-import { level } from "@utils/options";
+import { generateLabelValueOptions, level } from "@utils/options";
 import useWhichLayout from "@hooks/useWhichLayout";
 import { addDocumentShema } from "@utils/validations";
 import Button from "@atoms/Button";
@@ -17,15 +17,6 @@ import { api } from "@api/index";
 import usePayload from "@hooks/usePayload";
 import { notifyError } from "@utils/notify";
 import { queryClient } from "@context/index";
-
-const generateLabelValueOptions = (options: level[]) => {
-  return options.map((option) => {
-    return {
-      label: option,
-      value: option,
-    };
-  });
-};
 
 interface IFormInputs {
   title: string;

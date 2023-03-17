@@ -29,17 +29,11 @@ const Description = () => {
   // =======================================
   // ========= MUTATION AND QUERIES ========
   // =======================================
-  const { data, isLoading, isError } = useQuery(
-    ["question", id],
-    () => getQuestionById(id),
-    {
-      onSuccess: (data) => console.log("data", data),
-      retry: false,
-    }
-  );
+  const { data, isLoading, isError } = useQuery(["question", id], () => getQuestionById(id), {
+    retry: false,
+  });
   const addAnswerMutation = useMutation(
-    (data: { questionId: string | undefined; description: string }) =>
-      api.post("/questions/answer", data),
+    (data: { questionId: string | undefined; description: string }) => api.post("/questions/answer", data),
     {
       onSuccess: () => {
         queryClient.invalidateQueries("question");

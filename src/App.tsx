@@ -8,7 +8,6 @@ import { authenticatedRoutes, unauthenticatedRoutes } from "./routes";
 const App = () => {
   const { token } = useAuth();
   const payload = usePayload();
-  console.log(payload);
   useEffect(() => {
     OneSignal.init({
       appId: "d3405cc3-6fba-4cc9-9baf-fae5ad04f9d4",
@@ -21,9 +20,7 @@ const App = () => {
   if (token) {
     return <RouterProvider router={createBrowserRouter(authenticatedRoutes)} />;
   } else {
-    return (
-      <RouterProvider router={createBrowserRouter(unauthenticatedRoutes)} />
-    );
+    return <RouterProvider router={createBrowserRouter(unauthenticatedRoutes)} />;
   }
 };
 export default App;

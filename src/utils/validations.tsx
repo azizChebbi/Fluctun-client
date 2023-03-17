@@ -60,7 +60,6 @@ export const addDocumentShema = yup.object({
       return false;
     })
     .test("fileSize", "Fichier doit être moins que 30MB", (files: any) => {
-      console.log(" files", files);
       return files?.length && files[0].size <= 30000000;
     }),
   // .test(

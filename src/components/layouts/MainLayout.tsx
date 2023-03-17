@@ -1,14 +1,14 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
-import useMediaQuery from "@hooks/useMediaQuery";
+import useWhichLayout from "@hooks/useWhichLayout";
 import DesktopLayout from "./DesktopLayout";
 import MobileLayout from "./MobileLayout";
 
 const MainLayout = () => {
-  const matches = useMediaQuery("(min-width: 768px)");
+  const layout = useWhichLayout();
   return (
     <div>
-      {matches ? (
+      {layout == "desktop" ? (
         <DesktopLayout>
           <Outlet />
         </DesktopLayout>

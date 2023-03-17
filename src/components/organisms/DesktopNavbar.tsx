@@ -1,19 +1,15 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import Avatar from "@mui/material/Avatar";
-import { useQuery } from "react-query";
 import logo from "@icons/logo.svg";
 import Button from "@atoms/Button";
-import usePayload from "@hooks/usePayload";
-import { api } from "@api/index";
 import profilePicture from "@images/profile.svg";
+import useRole from "@hooks/useRole";
+import useUser from "@hooks/useUser";
 
 const DesktopNavbar = () => {
-  const { id, role } = usePayload();
-  const user = useQuery([role, id], () => api.get("/profile/" + id), {
-    refetchOnWindowFocus: false,
-    retry: false,
-  });
+  const role = useRole();
+  const user = useUser();
   return (
     <nav className=" col-span-2 flex items-center justify-between border-b border-[#AFAFAF] px-24">
       <Link to="/">
@@ -27,7 +23,7 @@ const DesktopNavbar = () => {
           </Button>
         </Link>
         <Link to="/profile">
-          <Avatar sx={{ width: 40, height: 40 }} alt="E" src={user.data?.data.photo || profilePicture} />
+          <Avatar sx={{ width: 40, height: 40 }} alt="E" src={user?.photo || profilePicture} />
         </Link>
       </div>
     </nav>

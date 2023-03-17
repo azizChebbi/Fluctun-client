@@ -135,27 +135,21 @@ const QuillEditor: FC<IProps> = ({ value, setValue, placeholder }) => {
       handlers: {
         image: imageHandler,
         color: function (value: string) {
-          console.log(value);
           reactQuillRef?.current?.getEditor().format("color", value);
         },
         background: function (value: string) {
-          console.log(value);
           reactQuillRef?.current?.getEditor().format("background", value);
         },
         align: function (value: string) {
-          console.log(value);
           reactQuillRef?.current?.getEditor().format("align", value);
         },
         "code-block": function (value: string) {
-          console.log(value);
           reactQuillRef?.current?.getEditor().format("code-block", value);
         },
         script: function (value: string) {
-          console.log(value);
           reactQuillRef?.current?.getEditor().format("script", value);
         },
         font: function (value: string) {
-          console.log(value);
           reactQuillRef?.current?.getEditor().format("font", value);
         },
       },
@@ -165,19 +159,11 @@ const QuillEditor: FC<IProps> = ({ value, setValue, placeholder }) => {
   // ============================================================
   // mutations
   // ============================================================
-  const uploadImageMutation = useMutation(
-    (formData: FormData) => api.post("/questions/upload-image", formData),
-    {
-      onSuccess: () => {
-        console.log(uploadImageMutation.data);
-      },
-      onError: () => {
-        notifyError(
-          "Un erreur est survenue lors de l'upload de l'image, veuillez réessayer"
-        );
-      },
-    }
-  );
+  const uploadImageMutation = useMutation((formData: FormData) => api.post("/questions/upload-image", formData), {
+    onError: () => {
+      notifyError("Un erreur est survenue lors de l'upload de l'image, veuillez réessayer");
+    },
+  });
 
   // ============================================================
   // handlers
@@ -190,19 +176,13 @@ const QuillEditor: FC<IProps> = ({ value, setValue, placeholder }) => {
     input.onchange = async () => {
       if (input.files?.length) {
         const file: File = input.files[0];
-        console.log(file);
         const formData = new FormData();
         formData.append("image", file);
         try {
           const { data } = await uploadImageMutation.mutateAsync(formData);
           const quill = reactQuillRef.current?.getEditor();
           const range = quill?.getSelection(true);
-          console.log("range", range);
-          quill?.insertEmbed(
-            range?.index || 0,
-            "image",
-            data?.Location || "https://via.placeholder.com/150"
-          );
+          quill?.insertEmbed(range?.index || 0, "image", data?.Location || "https://via.placeholder.com/150");
         } catch (error) {
           notifyError("Un erreur est survenue lors de l'upload de l'image");
         }

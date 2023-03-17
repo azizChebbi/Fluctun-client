@@ -11,24 +11,14 @@ export default function DraftEditor() {
   const removeImage = () => {
     const currentContent = editorState.getCurrentContent();
     const selection = editorState.getSelection();
-    console.log(selection);
-    const contentWithoutImage = Modifier.removeRange(
-      currentContent,
-      selection,
-      "backward"
-    );
-    const newEditorState = EditorState.push(
-      editorState,
-      contentWithoutImage,
-      "remove-range"
-    );
+    const contentWithoutImage = Modifier.removeRange(currentContent, selection, "backward");
+    const newEditorState = EditorState.push(editorState, contentWithoutImage, "remove-range");
     setEditorState(newEditorState);
   };
 
   const handleSave = () => {
     try {
       const html = draftToHtml(convertToRaw(editorState.getCurrentContent()));
-      console.log(html);
     } catch (error) {
       alert("error");
     }
@@ -59,13 +49,7 @@ export default function DraftEditor() {
             "history",
           ],
           inline: {
-            options: [
-              "bold",
-              "italic",
-              "underline",
-              "strikethrough",
-              "monospace",
-            ],
+            options: ["bold", "italic", "underline", "strikethrough", "monospace"],
             bold: { className: "bordered-option-classname" },
             italic: { className: "bordered-option-classname" },
             underline: { className: "bordered-option-classname" },
@@ -89,14 +73,7 @@ export default function DraftEditor() {
             defaultFontSize: 16,
           },
           fontFamily: {
-            options: [
-              "Arial",
-              "Georgia",
-              "Impact",
-              "Tahoma",
-              "Times New Roman",
-              "Verdana",
-            ],
+            options: ["Arial", "Georgia", "Impact", "Tahoma", "Times New Roman", "Verdana"],
           },
           image: {
             uploadCallback: handleImageUpload,

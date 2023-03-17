@@ -1,15 +1,12 @@
 import React from "react";
-import { useQuery } from "react-query";
 import CakeIcon from "@mui/icons-material/Cake";
 import EmailIcon from "@mui/icons-material/Email";
 import PhoneIcon from "@mui/icons-material/Phone";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import editSvg from "@icons/edit.svg";
-import { api } from "@api/index";
-import usePayload from "@hooks/usePayload";
-import { notifyError } from "@utils/notify";
 import DateFomratted from "@atoms/DateFomratted";
 import profilePicture from "@images/profile.svg";
+import useStudent from "@hooks/useStudent";
 import MetaData from "./MetaData";
 import ProfileQuestions from "./ProfileQuestions";
 import ProfilePicture from "./ProfilePicture";
@@ -17,21 +14,10 @@ import HeadLine from "./HeadLine";
 import Bio from "./Bio";
 import EditWrapper from "./EditWrapper";
 import EditProfileForm from "./EditProfileForm";
-import { Student } from "../types";
 
 const StudentProfile = () => {
   const [editMode, setEditMode] = React.useState(false);
-  const [student, setStudent] = React.useState<Student>();
-  const { id } = usePayload();
-  useQuery(["student", id], () => api.get("/profile/" + id), {
-    onSuccess: (data) => {
-      setStudent(data.data);
-    },
-
-    onError: () => {
-      notifyError("Un erreur s'est produite");
-    },
-  });
+  const student = useStudent();
   return (
     <>
       <div className=" my-8 mx-2 md:m-auto md:w-[80%]">
@@ -47,11 +33,7 @@ const StudentProfile = () => {
                 </button>
               </div>
             </div>
-            <HeadLine
-              name={student?.firstName + " " + student?.lastName}
-              id={student?.code}
-              level={student?.level}
-            />
+            <HeadLine name={student?.firstName + " " + student?.lastName} id={student?.code} level={student?.level} />
             <div className=" text-blue">
               <Bio>{student?.bio}</Bio>
               <MetaData Icon={EmailIcon}>{student?.email}</MetaData>
@@ -60,12 +42,8 @@ const StudentProfile = () => {
                   <DateFomratted date={student?.dateOfBirth} />
                 </MetaData>
               )}
-              {student?.address && (
-                <MetaData Icon={LocationOnIcon}>{student.address}</MetaData>
-              )}
-              {student?.number && (
-                <MetaData Icon={PhoneIcon}>{student?.number}</MetaData>
-              )}
+              {student?.address && <MetaData Icon={LocationOnIcon}>{student.address}</MetaData>}
+              {student?.number && <MetaData Icon={PhoneIcon}>{student?.number}</MetaData>}
             </div>
           </div>
           <div className=" bordr-[#E2E2E2] mt-4 rounded border bg-white px-6 py-8 md:w-[40%] md:border-none md:py-12">
@@ -80,9 +58,7 @@ const StudentProfile = () => {
             bio={student?.bio}
             address={student?.address}
             phone={student?.number}
-            birthDate={
-              student?.dateOfBirth ? new window.Date(student.dateOfBirth) : null
-            }
+            birthDate={student?.dateOfBirth ? new window.Date(student.dateOfBirth) : null}
           />
         </EditWrapper>
       )}

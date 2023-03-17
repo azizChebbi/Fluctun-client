@@ -4,19 +4,19 @@ import logoutSvg from "@icons/logout.svg";
 import useRole from "@hooks/useRole";
 import StudentProfile from "@features/profile/components/StudentProfile";
 import TeacherProfile from "@features/profile/components/TeacherProfile";
-import useMediaQuery from "@hooks/useMediaQuery";
 import DesktopNavbar from "@organisms/DesktopNavbar";
 import MobileNavbar from "@organisms/MobileNavbar";
 import { useAuth } from "@context/auth";
+import useWhichLayout from "@hooks/useWhichLayout";
 
 const Profile = () => {
   const role = useRole();
-  const matches = useMediaQuery("(min-width: 768px)");
+  const layout = useWhichLayout();
   const { logout } = useAuth();
 
   return (
     <div className=" grid h-screen grid-cols-[1fr] overflow-hidden md:grid-rows-[100px_1fr]">
-      {matches ? <DesktopNavbar /> : <MobileNavbar />}
+      {layout == "desktop" ? <DesktopNavbar /> : <MobileNavbar />}
       <div className=" overflow-scroll pt-24 md:pb-24 ">
         {role == "student" && <StudentProfile />}
         {role == "teacher" && <TeacherProfile />}

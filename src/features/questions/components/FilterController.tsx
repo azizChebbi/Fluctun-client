@@ -92,6 +92,8 @@ const Filter: FC<IProps> = ({ setQuestions, setIsLoading }) => {
     filterMuation.mutate();
   }, []);
 
+  const types = ["Avec réponse", "Sans réponse"];
+
   useEffect(() => {
     const params: URLParams = {};
     // ================= DATE ORDER =================

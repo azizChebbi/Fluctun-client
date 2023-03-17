@@ -64,7 +64,6 @@ const getTypeFromParams = (params: URLParams): TypeOptions => {
 };
 
 const getSubjectsFromParams = (params: URLParams, level: level, existedSubjects: subject[]): SubjectsOptions => {
-  console.log(params, level, existedSubjects);
   const { subjects } = params;
   if (subjects) {
     const acc: Option<subject> = {} as Option<subject>;
@@ -195,7 +194,6 @@ const resetLevels = (setLevels: Dispatch<SetStateAction<Option<level>>>, subject
 };
 
 const resetDateOrder = (setDateOrder: SetDateOrder) => {
-  console.log("called");
   setDateOrder(() => ({
     asc: false,
     desc: false,

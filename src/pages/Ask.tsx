@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useLocation } from "react-router-dom";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
@@ -11,12 +11,15 @@ import SelectOption from "@atoms/SelectOption";
 import Button from "@atoms/Button";
 import { askQuestionSchema } from "@utils/validations";
 import ErrorMessage from "@atoms/ErrorMessage";
-import { subjectOptions } from "@utils/options";
+import { generateLabelValueOptions, getSubjects, subject } from "@utils/options";
 import QuillEditor from "@organisms/QuillEditor";
 import { postQuestion, PostQuestionBody } from "@features/ask/api";
 import { notifyError, notifySuccess } from "@utils/notify";
 import minios from "@images/minions.svg";
 import { api } from "@api/index";
+import useStudent from "@hooks/useStudent";
+import { getTablesIntersection } from "@utils/filter";
+import useExistedSubjetcs from "@hooks/useExistedSubjetcs";
 
 interface IFormInputs {
   question: string;
@@ -30,6 +33,7 @@ const Ask = () => {
   // =========================================
   // ============= State & Refs =============
   // =========================================
+  const [subjects, setSubjects] = useState<subject[]>([]);
   const location = useLocation();
   const state = location.state as {
     id: string;
@@ -40,9 +44,7 @@ const Ask = () => {
       value: string;
     };
   };
-  const [description, setDescription] = useState<string>(
-    state?.description || ""
-  );
+  const [description, setDescription] = useState<string>(state?.description || "");
 
   // =========================================
   // ============= Hooks & Methods ==========
@@ -50,6 +52,7 @@ const Ask = () => {
 
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const student = useStudent();
 
   const {
     register,
@@ -69,35 +72,38 @@ const Ask = () => {
   // ============= Mutations ================
   // =========================================
 
-  const postQuestionMutation = useMutation(
-    (data: PostQuestionBody) => postQuestion(data),
-    {
-      onSuccess: () => {
-        notifySuccess("Question est ajouter avec succée");
-        navigate(-1);
-      },
-      onError: () => {
-        notifyError(
-          "Une erreur s'est produite, actualisez la page et réessayez"
-        );
-      },
-    }
-  );
+  const postQuestionMutation = useMutation((data: PostQuestionBody) => postQuestion(data), {
+    onSuccess: () => {
+      notifySuccess("Question est ajouter avec succée");
+      navigate(-1);
+    },
+    onError: () => {
+      notifyError("Une erreur s'est produite, actualisez la page et réessayez");
+    },
+  });
 
-  const editQuestionMutation = useMutation(
-    (data: PostQuestionBody) => api.put("/questions/" + state.id, data),
-    {
-      onSuccess: () => {
-        notifySuccess("Question est modifier avec succée");
-        navigate(-1);
-      },
-      onError: () => {
-        notifyError(
-          "Une erreur s'est produite, actualisez la page et réessayez"
-        );
-      },
-    }
-  );
+  const editQuestionMutation = useMutation((data: PostQuestionBody) => api.put("/questions/" + state.id, data), {
+    onSuccess: () => {
+      notifySuccess("Question est modifier avec succée");
+      navigate(-1);
+    },
+    onError: () => {
+      notifyError("Une erreur s'est produite, actualisez la page et réessayez");
+    },
+  });
+
+  const existedSubjects = useExistedSubjetcs();
+
+  // =========================================
+  // ============= Effects ==================
+  // =========================================
+
+  useEffect(() => {
+    const existedLevelSubjects = existedSubjects;
+    const whichSubjectsTeachedInThisLevel = getSubjects(student?.level);
+    const intersectionSubjects = getTablesIntersection(existedLevelSubjects || [], whichSubjectsTeachedInThisLevel);
+    setSubjects([...(intersectionSubjects as subject[])]);
+  }, [existedSubjects, student]);
 
   // =========================================
   // ============= Handlers =================
@@ -128,23 +134,15 @@ const Ask = () => {
             {t<string, string[]>("ask:advices.advices", {
               returnObjects: true,
             }).map((t: string, index: number) => (
-              <p
-                key={index}
-                className=" my-2 flex items-start gap-x-2 text-blue"
-              >
-                <FiberManualRecordIcon
-                  sx={{ color: "#142B33", fontSize: "5px", marginTop: "4px" }}
-                />
+              <p key={index} className=" my-2 flex items-start gap-x-2 text-blue">
+                <FiberManualRecordIcon sx={{ color: "#142B33", fontSize: "5px", marginTop: "4px" }} />
                 <p className=" text-xs font-light sm:text-base">{t}</p>
               </p>
             ))}
           </div>
         </div>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <AskSection
-            title={t("ask:form.question.title")}
-            description={t("ask:form.question.description")}
-          >
+          <AskSection title={t("ask:form.question.title")} description={t("ask:form.question.description")}>
             <Input
               registration={register("question")}
               errorMessage={errors.question?.message}
@@ -153,22 +151,12 @@ const Ask = () => {
             />
             <ErrorMessage>{errors.question?.message}</ErrorMessage>
           </AskSection>
-          <AskSection
-            title={t("ask:form.description.title")}
-            description={t("ask:form.description.description")}
-          >
+          <AskSection title={t("ask:form.description.title")} description={t("ask:form.description.description")}>
             <div className=" mt-4">
-              <QuillEditor
-                value={description}
-                setValue={setDescription}
-                placeholder="Ecrivez votre question ici..."
-              />
+              <QuillEditor value={description} setValue={setDescription} placeholder="Ecrivez votre question ici..." />
             </div>
           </AskSection>
-          <AskSection
-            title={t("ask:form.subject.title")}
-            description={t("ask:form.subject.description")}
-          >
+          <AskSection title={t("ask:form.subject.title")} description={t("ask:form.subject.description")}>
             <Controller
               name="subject"
               control={control}
@@ -177,7 +165,7 @@ const Ask = () => {
                   {...field}
                   ref={null}
                   placeholder=""
-                  options={subjectOptions}
+                  options={generateLabelValueOptions(subjects)}
                   controlStyle={{
                     borderColor: "#929292",
                     fontSize: "12px",
@@ -194,10 +182,7 @@ const Ask = () => {
               className=" rounded p-3 px-12 text-sm"
               type="submit"
               isLoading={postQuestionMutation.isLoading}
-              disabled={
-                !isValid ||
-                description.replace(/<(.|\n)*?>/g, "").trim().length < 50
-              }
+              disabled={!isValid || description.replace(/<(.|\n)*?>/g, "").trim().length < 50}
             >
               Valider
             </Button>
@@ -211,10 +196,7 @@ const Ask = () => {
           </div>
         </form>
       </div>
-      <img
-        src={minios}
-        className=" -mt-24 -ml-48 hidden max-w-[300px] md:block"
-      />
+      <img src={minios} className=" -mt-24 -ml-48 hidden max-w-[300px] md:block" />
     </div>
   );
 };

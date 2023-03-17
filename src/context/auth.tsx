@@ -18,19 +18,11 @@ function AuthProvider(props: any) {
   const [isLoading, setIsLoading] = React.useState<boolean>(true);
   const [token, setToken] = useLocalStorage<string | null>("at", null);
 
-  const refresh = useMutation(() => api.post("/auth/refresh"), {
-    onSuccess: (d) => {
-      console.log(d);
-    },
-    onError: (e) => {
-      console.log(e);
-    },
-  });
+  const refresh = useMutation(() => api.post("/auth/refresh"));
 
   async function getAccessToken() {
     try {
       const res = await api.post("/auth/refresh");
-      console.log(res);
       setToken(res.data.access_token);
     } catch (error) {
       setToken(null);
@@ -57,16 +49,9 @@ function AuthProvider(props: any) {
     logoutMutation.mutate();
   };
 
-  const value = React.useMemo(
-    () => ({ logout, token, setToken }),
-    [logout, token, setToken]
-  );
+  const value = React.useMemo(() => ({ logout, token, setToken }), [logout, token, setToken]);
 
-  return isLoading ? (
-    <FullPageSpinner />
-  ) : (
-    <AuthContext.Provider value={value} {...props} />
-  );
+  return isLoading ? <FullPageSpinner /> : <AuthContext.Provider value={value} {...props} />;
 }
 
 function useAuth() {
