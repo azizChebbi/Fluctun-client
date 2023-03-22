@@ -1,23 +1,31 @@
 import React, { Dispatch, FC, SetStateAction } from "react";
 import Checkbox from "@mui/material/Checkbox";
+import { generateArrayOfStringsFromObject } from "@features/questions/components/Filter";
 
 interface IProps {
   state: any;
   setState: Dispatch<SetStateAction<any>>;
+  setParams?: Dispatch<SetStateAction<any>>;
+  query?: "type" | "subjects" | "levels" | "dateOrder" | "startDate" | "endDate";
   isMultiple?: boolean;
 }
 
-const CheckOptions: FC<IProps> = ({ state, setState, isMultiple }) => {
+const CheckOptions: FC<IProps> = ({ state, setState, setParams, query, isMultiple }) => {
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setState((prev: any) => {
       const newState = prev;
       if (!isMultiple) {
         Object.keys(newState).forEach((key) => (newState[key] = false));
       }
-      return {
+      const newObject = {
         ...newState,
         [event.target.name]: event.target.checked,
       };
+      if (setParams && query) {
+        setParams((params: any) => ({ ...params, [query]: generateArrayOfStringsFromObject(newObject) }));
+      }
+
+      return newObject;
     });
   };
 
@@ -38,7 +46,7 @@ const CheckOptions: FC<IProps> = ({ state, setState, isMultiple }) => {
                 "& .MuiSvgIcon-root": { fontSize: 20 },
               }}
             />
-            <p className=" text-[#868686] text-lg">{key}</p>
+            <p className=" text-lg text-[#868686]">{key}</p>
           </div>
         );
       })}

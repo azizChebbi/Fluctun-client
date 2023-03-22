@@ -31,8 +31,7 @@ export type subject =
   | "Allemand"
   | "Histoire"
   | "Géographie"
-  | "Economie"
-  | "Gestion"
+  | "Economie et gestion"
   | "Philosophie"
   | "Islamique";
 
@@ -86,8 +85,7 @@ export const classes: Classes = {
     "Islamique",
     "Histoire",
     "Géographie",
-    "Economie",
-    "Gestion",
+    "Economie et gestion",
   ],
   "2éme année informatique": [
     "Mathématique",
@@ -161,8 +159,7 @@ export const classes: Classes = {
     "Allemand",
     "Espagnol",
     "Italien",
-    "Economie",
-    "Gestion",
+    "Economie et gestion",
   ],
   "3éme année techniques": [
     "Mathématique",
@@ -249,8 +246,7 @@ export const classes: Classes = {
     "Allemand",
     "Espagnol",
     "Italien",
-    "Economie",
-    "Gestion",
+    "Economie et gestion",
   ],
   "4éme année techniques": [
     "Mathématique",
@@ -312,8 +308,7 @@ export const subjectOptions: SubjectOption[] = [
   { value: "Allemand", label: "Allemand" },
   { value: "Espagnol", label: "Espagnol" },
   { value: "Italien", label: "Italien" },
-  { value: "Economie", label: "Economie" },
-  { value: "Gestion", label: "Gestion" },
+  { value: "Economie et gestion", label: "Economie et gestion" },
 ];
 
 export const levelOptions: LevelOption[] = [

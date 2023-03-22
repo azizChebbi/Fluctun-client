@@ -14,7 +14,7 @@
 
 html {
   font-size: 75%;
-  background-color: #fcfcfc;
+  background-color: white;
 }
 
 :root {
@@ -28,11 +28,7 @@ html {
 }
 
 .question-cover {
-  background-image: linear-gradient(
-    rgba(252, 252, 252, 0),
-    rgba(252, 252, 252, 0.8),
-    #fcfcfc
-  );
+  background-image: linear-gradient(rgba(252, 252, 252, 0), rgba(252, 252, 252, 0.8), #fcfcfc);
 }
 
 .answered-ticket {

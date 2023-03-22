@@ -2,12 +2,12 @@ import React, { FC } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Modal from "@mui/material/Modal";
 import { useMutation } from "react-query";
-import DateFomratted from "@atoms/DateFomratted";
 import usePayload from "@hooks/usePayload";
 import Button from "@atoms/Button";
 import { api } from "@api/index";
 import { notifyError } from "@utils/notify";
 import { queryClient } from "@context/index";
+import { getDetailedDateFormat } from "@utils/transformDate";
 import AddComment from "./AddComment";
 import Comment from "./Comment";
 import { Comment as CommentType } from "../types";
@@ -59,38 +59,28 @@ const QuestionOrAnswerDetails: FC<IProps> = ({
   // =============== MUTATIONS ===============
   // =========================================
 
-  const deleteQuestionMutation = useMutation(
-    () => api.delete("/questions/question?id=" + id),
-    {
-      onSuccess: () => {
-        handleClose();
-        queryClient.invalidateQueries(["question", id]);
-        navigate(-1);
-      },
-      onError: () => {
-        notifyError(
-          "Une erreur est survenue lors de la suppression de la question"
-        );
-        handleClose();
-      },
-    }
-  );
+  const deleteQuestionMutation = useMutation(() => api.delete("/questions/question?id=" + id), {
+    onSuccess: () => {
+      handleClose();
+      queryClient.invalidateQueries(["question", id]);
+      navigate(-1);
+    },
+    onError: () => {
+      notifyError("Une erreur est survenue lors de la suppression de la question");
+      handleClose();
+    },
+  });
 
-  const deleteAnswerMutation = useMutation(
-    () => api.delete("/questions/answer?id=" + id),
-    {
-      onSuccess: () => {
-        handleClose();
-        queryClient.invalidateQueries("question");
-      },
-      onError: () => {
-        notifyError(
-          "Une erreur est survenue lors de la suppression de la réponse"
-        );
-        handleClose();
-      },
-    }
-  );
+  const deleteAnswerMutation = useMutation(() => api.delete("/questions/answer?id=" + id), {
+    onSuccess: () => {
+      handleClose();
+      queryClient.invalidateQueries("question");
+    },
+    onError: () => {
+      notifyError("Une erreur est survenue lors de la suppression de la réponse");
+      handleClose();
+    },
+  });
 
   // ========================================
   // =============== HANDLERS ===============
@@ -109,29 +99,27 @@ const QuestionOrAnswerDetails: FC<IProps> = ({
 
   return (
     <>
-      <div className="my-6 rounded border border-[#E2E2E2]">
+      <div className={"my-6 rounded border border-[#E2E2E2] bg-[#F1F1F1]"}>
         {isQuestion && (
-          <div className=" flex items-start justify-between gap-3 border-b border-[#E2E2E2] bg-[#FCFCFC] p-4 md:p-8">
+          <div className=" flex items-start justify-between gap-3 border-b border-[#E2E2E2]  p-4 md:p-8">
             <p className=" flex-1 font-medium text-blue md:text-xl">
               <span className=" text-orange">Question: </span>
               {title}
             </p>
             <p className=" mt-1 w-max text-xs text-[#A1A1A1] md:text-base">
-              Publié: <DateFomratted date={createdAt || ""} />
+              Publié: {getDetailedDateFormat(createdAt)}
             </p>
           </div>
         )}
         <div
           dangerouslySetInnerHTML={{ __html: description }}
-          className=" border-b border-[#E2E2E2] p-4 md:p-8"
+          className=" border-b border-[#E2E2E2] bg-white p-4 md:p-8"
         />
-        <div className=" bg-[#FCFCFC] p-4 md:p-8 md:pt-4">
+        <div className=" p-4 md:p-8 md:pt-4">
           <div className=" flex flex-row-reverse items-start justify-between">
             {!isQuestion && (
               <div className=" mb-4 w-max items-center justify-between bg-[#EBF7FF] p-4 text-xs  md:text-base">
-                <p className=" text-[#A1A1A1]">
-                  Publié le <DateFomratted date={createdAt || ""} />
-                </p>
+                <p className=" text-[#A1A1A1]">Publié le {getDetailedDateFormat(createdAt)}</p>
                 <div className=" mt-2 flex items-center gap-2 md:gap-4">
                   <img
                     src={
@@ -141,14 +129,12 @@ const QuestionOrAnswerDetails: FC<IProps> = ({
                     className=" h-9 w-9 rounded object-cover"
                   />
                   <p className=" max-w-[18ch] text-blue">
-                    {teacher?.firstName + " " + teacher?.lastName}
+                    {teacher ? teacher?.firstName + " " + teacher?.lastName : "teacher"}
                   </p>
                 </div>
               </div>
             )}
-            {(isQuestion
-              ? payload.id == studentId
-              : payload.id == teacherId) && (
+            {(isQuestion ? payload.id == studentId : payload.id == teacherId) && (
               <div className=" mt-2 flex items-center gap-4">
                 <Link
                   to={isQuestion ? "/ask" : "/edit-answer/" + id}
@@ -162,10 +148,7 @@ const QuestionOrAnswerDetails: FC<IProps> = ({
                 >
                   Editer
                 </Link>
-                <button
-                  className=" text-xs font-semibold text-[#A1A1A1] md:text-base"
-                  onClick={handleOpen}
-                >
+                <button className=" text-xs font-semibold text-[#A1A1A1] md:text-base" onClick={handleOpen}>
                   Supprimer
                 </button>
               </div>
@@ -176,18 +159,12 @@ const QuestionOrAnswerDetails: FC<IProps> = ({
           {/* =============== COMMENTS =============== */}
           {/* ======================================== */}
           <div className=" md:mt-12">
-            <p className=" text-lg font-medium text-blue md:text-xl">
-              Commentaires:
-            </p>
+            <p className=" text-lg font-medium text-blue md:text-xl">Commentaires:</p>
             <div className=" my-6">
               {comments.map((comment, index) => (
                 <div
                   key={comment.id}
-                  className={`my-4 pb-3 ${
-                    index < comments.length - 1
-                      ? "border-b border-[#E2E2E2]"
-                      : ""
-                  }`}
+                  className={`my-4 pb-3 ${index < comments.length - 1 ? "border-b border-[#E2E2E2]" : ""}`}
                 >
                   <Comment comment={comment} />
                 </div>
@@ -220,10 +197,7 @@ const QuestionOrAnswerDetails: FC<IProps> = ({
                 color="#EF4445"
                 className=" px-6 py-2"
                 onClick={handleDeletePost}
-                isLoading={
-                  deleteAnswerMutation.isLoading ||
-                  deleteQuestionMutation.isLoading
-                }
+                isLoading={deleteAnswerMutation.isLoading || deleteQuestionMutation.isLoading}
               >
                 Supprimer
               </Button>

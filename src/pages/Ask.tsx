@@ -142,20 +142,6 @@ const Ask = () => {
           </div>
         </div>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <AskSection title={t("ask:form.question.title")} description={t("ask:form.question.description")}>
-            <Input
-              registration={register("question")}
-              errorMessage={errors.question?.message}
-              placeholder="Ajouter un titre"
-              className=" mt-4"
-            />
-            <ErrorMessage>{errors.question?.message}</ErrorMessage>
-          </AskSection>
-          <AskSection title={t("ask:form.description.title")} description={t("ask:form.description.description")}>
-            <div className=" mt-4">
-              <QuillEditor value={description} setValue={setDescription} placeholder="Ecrivez votre question ici..." />
-            </div>
-          </AskSection>
           <AskSection title={t("ask:form.subject.title")} description={t("ask:form.subject.description")}>
             <Controller
               name="subject"
@@ -177,12 +163,27 @@ const Ask = () => {
             />
             <ErrorMessage>{errors.subject?.message}</ErrorMessage>
           </AskSection>
+          <AskSection title={t("ask:form.question.title")} description={t("ask:form.question.description")}>
+            <Input
+              registration={register("question")}
+              errorMessage={errors.question?.message}
+              placeholder="Ajouter un titre"
+              className=" mt-4"
+            />
+            <ErrorMessage>{errors.question?.message}</ErrorMessage>
+          </AskSection>
+          <AskSection title={t("ask:form.description.title")} description={t("ask:form.description.description")}>
+            <div className=" mt-4">
+              <QuillEditor value={description} setValue={setDescription} placeholder="Ecrivez votre question ici..." />
+            </div>
+          </AskSection>
+
           <div className=" mt-8 flex items-center justify-between">
             <Button
               className=" rounded p-3 px-12 text-sm"
               type="submit"
               isLoading={postQuestionMutation.isLoading}
-              disabled={!isValid || description.replace(/<(.|\n)*?>/g, "").trim().length < 50}
+              disabled={!isValid || description.replace(/<(.|\n)*?>/g, "").trim().length < 10}
             >
               Valider
             </Button>

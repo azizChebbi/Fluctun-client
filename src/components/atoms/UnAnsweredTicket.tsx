@@ -1,7 +1,7 @@
 import React from "react";
 
 const UnAnsweredBar = () => {
-  return <div className="unanswered-ticket w-6 h-[200px]"></div>;
+  return <div className="unanswered-ticket h-[200px] w-4  md:w-6"></div>;
 };
 
 export default UnAnsweredBar;
