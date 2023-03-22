@@ -1,12 +1,12 @@
 import React, { Dispatch, FC, SetStateAction } from "react";
 import Checkbox from "@mui/material/Checkbox";
-import { generateArrayOfStringsFromObject } from "@features/questions/components/Filter2";
+import { generateArrayOfStringsFromObject } from "@features/questions/components/Filter";
 
 interface IProps {
   state: any;
   setState: Dispatch<SetStateAction<any>>;
   setParams?: Dispatch<SetStateAction<any>>;
-  query?: string;
+  query?: "type" | "subjects" | "levels" | "dateOrder" | "startDate" | "endDate";
   isMultiple?: boolean;
 }
 

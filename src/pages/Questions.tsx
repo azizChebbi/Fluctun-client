@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 import { Question as QuestionType } from "@features/questions/types";
 import QuestionsList from "@features/questions/components/QuestionsList";
-import Filter from "@features/questions/components/FilterController";
 import SideDrawer from "@features/questions/components/Drawer";
 import QuestionSkeleton from "@features/questions/components/QuestionSkeleton";
-import Filter2 from "@features/questions/components/Filter2";
+import Filter from "@features/questions/components/Filter";
 
 const Questions = () => {
   const [open, setOpen] = React.useState(false);
@@ -25,11 +24,10 @@ const Questions = () => {
         {isLoading ? [0, 1, 2, 3].map((i) => <QuestionSkeleton key={i} />) : <QuestionsList questions={questions} />}
       </div>
       <div className=" hidden overflow-scroll  md:block">
-        {/* <Filter questions={questions} setQuestions={setQuestions} setOpen={setOpen} setIsLoading={setIsLoading} /> */}
-        <Filter2 />
+        <Filter setQuestions={setQuestions} setIsLoading={setIsLoading} />
       </div>
       <SideDrawer open={open} setOpen={setOpen}>
-        <Filter questions={questions} setQuestions={setQuestions} setOpen={setOpen} setIsLoading={setIsLoading} />
+        <Filter setQuestions={setQuestions} setIsLoading={setIsLoading} />
       </SideDrawer>
     </div>
   );
