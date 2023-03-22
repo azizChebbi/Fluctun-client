@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery } from "react-query";
 import { useTranslation } from "react-i18next";
+import CheckIcon from "@mui/icons-material/Check";
 import { getQuestionById } from "@features/questions/api";
 import QuestionOrAnswerDetails from "@features/questions/components/QuestionOrAnswerDetails";
 import usePayload from "@hooks/usePayload";
@@ -78,6 +79,11 @@ const Description = () => {
         postComment={() => null}
         onDelete={() => null}
       />
+      {data?.data?.answers.length ? (
+        <p className=" my-12 flex items-center justify-center gap-2 text-xl text-[#50B848]">
+          Les réponses <CheckIcon sx={{ color: "#50B848", fontSize: 26 }} />
+        </p>
+      ) : null}
       {data?.data?.answers?.map((answer) => (
         <QuestionOrAnswerDetails
           key={answer.id}

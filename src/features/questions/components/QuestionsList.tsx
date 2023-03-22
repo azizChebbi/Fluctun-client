@@ -11,7 +11,7 @@ const QuestionsList: FC<IProps> = ({ questions }) => {
       {questions.map((question) => (
         <div
           key={question.id}
-          className=" my-12 border border-[#E2E2E2] transition hover:shadow-question md:my-16"
+          className=" my-6 rounded border-2 border-[#E2E2E2] transition hover:shadow-question md:my-16"
         >
           <Question {...question} />
         </div>

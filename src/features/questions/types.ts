@@ -15,6 +15,7 @@ export type Question = {
   description: string;
   answered: boolean;
   subject: subject;
+  createdAt: string;
 };
 
 // ==============================

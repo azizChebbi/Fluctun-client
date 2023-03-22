@@ -3,7 +3,7 @@ import { EditorState, convertToRaw, Modifier } from "draft-js";
 import { Editor } from "react-draft-wysiwyg";
 import draftToHtml from "draftjs-to-html";
 import "@utils/draft.css";
-// import "../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
+import { notifyError } from "@utils/notify";
 
 export default function DraftEditor() {
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
@@ -18,9 +18,9 @@ export default function DraftEditor() {
 
   const handleSave = () => {
     try {
-      const html = draftToHtml(convertToRaw(editorState.getCurrentContent()));
+      draftToHtml(convertToRaw(editorState.getCurrentContent()));
     } catch (error) {
-      alert("error");
+      notifyError("Un problème est survenu lors de la sauvegarde de votre question");
     }
     // Save the HTML to a server or perform some other action with it
   };

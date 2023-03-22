@@ -1,11 +1,6 @@
 import React, { FC, SetStateAction } from "react";
 import ClipLoader from "react-spinners/ClipLoader";
-import {
-  DateOrderOptions,
-  LevelsOptions,
-  SubjectsOptions,
-  TypeOptions,
-} from "@utils/filter";
+import { DateOrderOptions, LevelsOptions, SubjectsOptions, TypeOptions } from "@utils/filter";
 import FilterAccordian from "@atoms/FilterAccordian";
 import CheckOptions from "@atoms/CheckOptions";
 import usePayload from "@hooks/usePayload";
@@ -50,30 +45,23 @@ const FilterUI: FC<IProps> = ({
   const { role } = usePayload();
   return (
     <div className=" pb-12">
-      <p className=" my-12 text-center text-base text-orange underline underline-offset-1 md:text-xl">
-        Les filtres
-      </p>
+      <p className=" my-12 text-center text-base text-orange underline underline-offset-1 md:text-xl">Les filtres</p>
       <div>
         <FilterAccordian title="Type" isExpanded>
           <CheckOptions state={questionTypes} setState={setQuestionTypes} />
         </FilterAccordian>
         {role === "student" && (
-          <FilterAccordian title="Matiére">
+          <FilterAccordian title="Matiére" isExpanded>
             <CheckOptions state={subjects} setState={setSubjects} isMultiple />
           </FilterAccordian>
         )}
         {role === "teacher" && (
-          <FilterAccordian title="Niveau">
+          <FilterAccordian title="Niveau" isExpanded>
             <CheckOptions state={levels} setState={setLevels} isMultiple />
           </FilterAccordian>
         )}
-        <FilterAccordian title="Date">
-          <Date
-            startDate={startDate}
-            setStartDate={setStartDate}
-            endDate={endDate}
-            setEndDate={setEndDate}
-          />
+        <FilterAccordian title="Date" isExpanded>
+          <Date startDate={startDate} setStartDate={setStartDate} endDate={endDate} setEndDate={setEndDate} />
           <CheckOptions state={dateOrder} setState={setDateOrder} />
         </FilterAccordian>
         <button
@@ -82,11 +70,7 @@ const FilterUI: FC<IProps> = ({
           className=" flex h-20 w-full items-center justify-center border-y border-[#E2E2E2] bg-[#FFF4F2] text-base font-medium text-orange md:text-lg "
           disabled={isLoading}
         >
-          {isLoading ? (
-            <ClipLoader color="#F68E79" size="25px" />
-          ) : (
-            <p>Appliquer les filtres</p>
-          )}
+          {isLoading ? <ClipLoader color="#F68E79" size="25px" /> : <p>Appliquer les filtres</p>}
         </button>
         <button
           type="button"

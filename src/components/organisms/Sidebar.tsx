@@ -3,11 +3,9 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { tabs } from "@utils/tabs";
 import usePathname from "@hooks/usePathname";
-import { useAuth } from "@context/auth";
 import useRole from "@hooks/useRole";
 
 const Sidebar = () => {
-  const { logout } = useAuth();
   const { t } = useTranslation();
 
   const role = useRole();
@@ -22,19 +20,13 @@ const Sidebar = () => {
               <Link
                 to={tab.href}
                 key={index}
-                className={` gap-2 py-8 mb-2${
-                  tab.href == usePathname()
-                    ? " border-l-4 border-blue bg-[#F8F8F8]"
-                    : ""
-                }`}
+                className={` gap-2 py-8 ${tab.href == usePathname() ? " border-l-4 border-blue bg-[#F8F8F8]" : ""}`}
               >
                 <div className="ml-[20%] flex items-center">
                   <div className="w-12">
                     <img src={tab.icon} alt={tab.label} />
                   </div>
-                  <span className=" text-right text-xl font-medium">
-                    {t(`tabs.${tab.label}`)}
-                  </span>
+                  <span className=" text-right text-xl font-medium">{t(`tabs.${tab.label}`)}</span>
                 </div>
               </Link>
             );

@@ -129,9 +129,9 @@ const Filter: FC<IProps> = ({ setQuestions, setIsLoading }) => {
       params.levels = undefined;
     }
     // ================= DATE ORDER =================
-    if (dateOrder["asc"]) {
+    if (dateOrder["Plus ancien"]) {
       params.dateOrder = "asc";
-    } else if (dateOrder["desc"]) {
+    } else if (dateOrder["Plus récent"]) {
       params.dateOrder = "desc";
     } else {
       params.dateOrder = undefined;

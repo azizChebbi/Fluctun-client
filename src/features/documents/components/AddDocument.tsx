@@ -42,7 +42,7 @@ const AddDocument: FC<IProps> = ({ levels }) => {
     handleSubmit,
     getValues,
     reset,
-    formState: { errors, isValid },
+    formState: { errors },
     control,
   } = useForm<IFormInputs>({
     resolver: yupResolver(schema),

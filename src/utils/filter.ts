@@ -10,7 +10,7 @@ export type Option<T extends string> = {
 export type TypeOptions = Option<"Avec réponse" | "Sans réponse">;
 export type SubjectsOptions = Option<subject>;
 export type LevelsOptions = Option<level>;
-export type DateOrderOptions = Option<"asc" | "desc">;
+export type DateOrderOptions = Option<"Plus ancien" | "Plus récent">;
 
 // ================================
 // ========= TYPES ================
@@ -18,7 +18,7 @@ export type DateOrderOptions = Option<"asc" | "desc">;
 type SetQuestionTypes = Dispatch<SetStateAction<TypeOptions>>;
 type SetSubjects = Dispatch<SetStateAction<Option<subject>>>;
 type SetLevels = Dispatch<SetStateAction<Option<level>>>;
-type SetDateOrder = Dispatch<SetStateAction<Option<"asc" | "desc">>>;
+type SetDateOrder = Dispatch<SetStateAction<Option<"Plus récent" | "Plus ancien">>>;
 type SetStartDate = Dispatch<SetStateAction<Date | null>>;
 type SetEndDate = Dispatch<SetStateAction<Date | null>>;
 type SetParams = Dispatch<SetStateAction<URLParams>>;
@@ -136,13 +136,13 @@ const getDateOrderFromParams = (params: URLParams): DateOrderOptions => {
   const { dateOrder } = params;
   if (dateOrder) {
     return {
-      asc: dateOrder === "asc",
-      desc: dateOrder === "desc",
+      "Plus ancien": dateOrder === "asc",
+      "Plus récent": dateOrder === "desc",
     };
   }
   return {
-    asc: false,
-    desc: false,
+    "Plus ancien": false,
+    "Plus récent": false,
   };
 };
 
@@ -195,8 +195,8 @@ const resetLevels = (setLevels: Dispatch<SetStateAction<Option<level>>>, subject
 
 const resetDateOrder = (setDateOrder: SetDateOrder) => {
   setDateOrder(() => ({
-    asc: false,
-    desc: false,
+    "Plus ancien": false,
+    "Plus récent": false,
   }));
 };
 
