@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import { getSubjects, subject } from "@utils/options";
-import { getTablesIntersection } from "@utils/filter";
 import { DocumentType } from "@utils/documentsType";
 import useStudent from "@hooks/useStudent";
 import useExistedSubjetcs from "@hooks/useExistedSubjetcs";
+import { getTablesIntersection } from "@pages/Ask";
 import CourseAccordian from "./CourseAccordian";
 import Document from "./Document";
 import { getStudentDocuments, Document as TypeDocument } from "../api";

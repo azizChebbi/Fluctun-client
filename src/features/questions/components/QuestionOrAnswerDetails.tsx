@@ -10,6 +10,7 @@ import { queryClient } from "@context/index";
 import { getDetailedDateFormat } from "@utils/transformDate";
 import AddComment from "./AddComment";
 import Comment from "./Comment";
+import { getDirection } from "./Question";
 import { Comment as CommentType } from "../types";
 
 interface IProps {
@@ -114,6 +115,7 @@ const QuestionOrAnswerDetails: FC<IProps> = ({
         <div
           dangerouslySetInnerHTML={{ __html: description }}
           className=" border-b border-[#E2E2E2] bg-white p-4 md:p-8"
+          dir={getDirection(subject)}
         />
         <div className=" p-4 md:p-8 md:pt-4">
           <div className=" flex flex-row-reverse items-start justify-between">

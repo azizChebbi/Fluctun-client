@@ -18,8 +18,13 @@ import { notifyError, notifySuccess } from "@utils/notify";
 import minios from "@images/minions.svg";
 import { api } from "@api/index";
 import useStudent from "@hooks/useStudent";
-import { getTablesIntersection } from "@utils/filter";
+// import { getTablesIntersection } from "@utils/filter";
 import useExistedSubjetcs from "@hooks/useExistedSubjetcs";
+
+export const getTablesIntersection = (table1: any[], table2: any[]) => {
+  const intersection = table1.filter((value) => table2.includes(value));
+  return intersection;
+};
 
 interface IFormInputs {
   question: string;

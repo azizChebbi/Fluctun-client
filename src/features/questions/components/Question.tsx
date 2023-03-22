@@ -4,7 +4,16 @@ import AnsweredBar from "@atoms/AnsweredTicket";
 import UnAnsweredBar from "@atoms/UnAnsweredTicket";
 import { getDetailedDateFormat } from "@utils/transformDate";
 import { icons } from "@utils/icons";
+import { subject } from "@utils/options";
 import { Question as QuestionType } from "../types";
+
+// function that return either ltr or rtl based on the subject
+export const getDirection = (subject: subject) => {
+  if (["Arabe", "Philosophy", "Islamic"].includes(subject)) {
+    return "rtl";
+  }
+  return "ltr";
+};
 
 const Question: FC<QuestionType> = ({ title, description, answered, id, createdAt, subject }) => {
   return (
@@ -23,7 +32,7 @@ const Question: FC<QuestionType> = ({ title, description, answered, id, createdA
           </p>
           <div>
             <div className=" relative max-h-24 overflow-hidden p-4">
-              <div dangerouslySetInnerHTML={{ __html: description }} />
+              <div dangerouslySetInnerHTML={{ __html: description }} dir={getDirection(subject)} />
               <div className=" question-cover absolute top-0 left-0 right-0 bottom-0 flex items-end justify-center"></div>
             </div>
             <div className=" relative flex items-center justify-center py-4 pb-6">

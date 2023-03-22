@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import { getLevels, level } from "@utils/options";
-import { getTablesIntersection } from "@utils/filter";
 import { DocumentType } from "@utils/documentsType";
 import useTeacher from "@hooks/useTeacher";
 import useExistedLevels from "@hooks/useExistedLevels";
+import { getTablesIntersection } from "@pages/Ask";
 import CourseAccordian from "./CourseAccordian";
 import AddDocument from "./AddDocument";
 import Document from "./Document";
