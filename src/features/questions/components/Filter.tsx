@@ -25,20 +25,17 @@ import { Question } from "../types";
 // ================= 2 WAYS BINDING ================
 // =================================================
 
-const generateObjectFromArrayOfStrings = (array: string[], value?: boolean) => {
-  const object: Record<string, boolean> = {};
-  array.forEach((key) => {
-    object[key] = !!value;
-  });
-  return object;
+const generateObjectFromArrayOfStrings = (array: string[], value = false) => {
+  return array.reduce((acc, key) => ({ ...acc, [key]: value }), {});
 };
 
 // =========================VS====================
 
 export const generateArrayOfStringsFromObject = (object: Record<string, boolean>) => {
-  const array = [];
-  for (const key in object) if (object[key]) array.push(reverseSynonyms[key] || key);
-  return array;
+  return Object.entries(object).reduce(
+    (acc, [key, value]) => (value ? [...acc, reverseSynonyms[key] || key] : acc),
+    [] as string[]
+  );
 };
 
 // =================================================
